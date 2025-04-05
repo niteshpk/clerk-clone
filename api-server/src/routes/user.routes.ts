@@ -5,18 +5,24 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  verifyOTP,
+  resendOTP,
 } from "../controllers/user.controller";
 import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 
-// All routes below require authentication
+// OTP routes
+router.post("/otp/verify", verifyOTP);
+router.post("/otp/resend", resendOTP);
+
+// Protected routes
 router.use(authMiddleware);
 
-// GET /api/users/me - Get current user details
+// GET /api/users/me - Get current user
 router.get("/me", getCurrentUser);
 
-// GET /api/users - Get all users (admin only)
+// GET /api/users - Get all users
 router.get("/", getAllUsers);
 
 // GET /api/users/:id - Get user by ID

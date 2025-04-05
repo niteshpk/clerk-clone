@@ -2,6 +2,15 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import { ApiResponseBuilder } from "../types/api-response";
 import { Types } from "mongoose";
+import SMSService from "../services/sms-local.service";
+import { generateOTP } from "../utils/otp.utils";
+
+// Initialize SMS service
+const smsService = new SMSService();
+
+// Store OTPs temporarily (in production, use Redis or similar)
+const otpStore: Map<string, { otp: string; timestamp: number }> = new Map();
+const OTP_EXPIRY_TIME = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 // Helper function to transform _id to id and handle ObjectId and Date conversions
 const transformUser = (user: any) => {
@@ -14,6 +23,168 @@ const transformUser = (user: any) => {
     updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : updatedAt,
     lastLogin: lastLogin instanceof Date ? lastLogin.toISOString() : lastLogin,
   };
+};
+
+export const verifyOTP = async (req: Request, res: Response) => {
+  try {
+    const { phoneNumber, otp } = req.body;
+
+    if (!phoneNumber || !otp) {
+      return ApiResponseBuilder.send(
+        res,
+        400,
+        ApiResponseBuilder.error(
+          "Validation Error",
+          {
+            code: "MISSING_FIELDS",
+            details: "Phone number and OTP are required",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    const storedOTP = otpStore.get(phoneNumber);
+
+    if (!storedOTP) {
+      return ApiResponseBuilder.send(
+        res,
+        400,
+        ApiResponseBuilder.error(
+          "Invalid OTP",
+          {
+            code: "OTP_NOT_FOUND",
+            details: "OTP not found or expired",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    if (Date.now() - storedOTP.timestamp > OTP_EXPIRY_TIME) {
+      otpStore.delete(phoneNumber);
+      return ApiResponseBuilder.send(
+        res,
+        400,
+        ApiResponseBuilder.error(
+          "Invalid OTP",
+          {
+            code: "OTP_EXPIRED",
+            details: "OTP has expired",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    if (storedOTP.otp !== otp) {
+      return ApiResponseBuilder.send(
+        res,
+        400,
+        ApiResponseBuilder.error(
+          "Invalid OTP",
+          {
+            code: "INVALID_OTP",
+            details: "The provided OTP is incorrect",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    // Clear the OTP after successful verification
+    otpStore.delete(phoneNumber);
+
+    return ApiResponseBuilder.send(
+      res,
+      200,
+      ApiResponseBuilder.success(
+        "OTP verified successfully",
+        null,
+        undefined,
+        req.requestId
+      )
+    );
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return ApiResponseBuilder.send(
+      res,
+      500,
+      ApiResponseBuilder.internalError(
+        "Failed to verify OTP",
+        error instanceof Error ? error.message : undefined,
+        req.requestId
+      )
+    );
+  }
+};
+
+export const resendOTP = async (req: Request, res: Response) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return ApiResponseBuilder.send(
+        res,
+        400,
+        ApiResponseBuilder.error(
+          "Validation Error",
+          {
+            code: "MISSING_FIELDS",
+            details: "Phone number is required",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    // Generate new OTP
+    const otp = generateOTP();
+    const timestamp = Date.now();
+
+    // Store the new OTP
+    otpStore.set(phoneNumber, { otp, timestamp });
+
+    // Send OTP via SMS
+    const smsSent = await smsService.sendOTP(phoneNumber, otp);
+
+    if (!smsSent) {
+      return ApiResponseBuilder.send(
+        res,
+        500,
+        ApiResponseBuilder.error(
+          "SMS Error",
+          {
+            code: "SMS_SEND_FAILED",
+            details: "Failed to send OTP via SMS",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    return ApiResponseBuilder.send(
+      res,
+      200,
+      ApiResponseBuilder.success(
+        "OTP sent successfully",
+        null,
+        undefined,
+        req.requestId
+      )
+    );
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    return ApiResponseBuilder.send(
+      res,
+      500,
+      ApiResponseBuilder.internalError(
+        "Failed to resend OTP",
+        error instanceof Error ? error.message : undefined,
+        req.requestId
+      )
+    );
+  }
 };
 
 export const getCurrentUser = async (req: Request, res: Response) => {
