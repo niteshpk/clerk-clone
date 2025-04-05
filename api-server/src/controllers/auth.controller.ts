@@ -4,11 +4,9 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import Session from "../models/session.model";
 import EmailVerification from "../models/email-verification.model";
-import {
-  generateVerificationToken,
-  sendVerificationEmail,
-} from "../services/email.service";
+import { generateVerificationToken } from "../services/email.service";
 import { ApiResponseBuilder } from "../types/api-response";
+import { emailQueue } from "../services/email-queue.service";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -42,7 +40,11 @@ export const register = async (req: Request, res: Response) => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     });
 
-    await sendVerificationEmail(email, verificationToken);
+    // Add email sending to queue
+    emailQueue.addToQueue({
+      email: user.email,
+      token: verificationToken,
+    });
 
     return ApiResponseBuilder.send(
       res,
@@ -212,7 +214,10 @@ export const login = async (req: Request, res: Response) => {
           token: newToken,
           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
         });
-        await sendVerificationEmail(user.email, newToken);
+        await emailQueue.addToQueue({
+          email: user.email,
+          token: newToken,
+        });
         details =
           "A new verification email has been sent to your email address.";
       } else {
@@ -286,13 +291,51 @@ export const login = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   try {
-    await Session.findByIdAndDelete(res.locals.sessionId);
+    const sessionId = res.locals.sessionId;
+
+    if (!sessionId) {
+      return ApiResponseBuilder.send(
+        res,
+        401,
+        ApiResponseBuilder.error(
+          "Unauthorized - No valid session found",
+          {
+            code: "UNAUTHORIZED",
+            details: "Please login to access this resource",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    const session = await Session.findById(sessionId);
+    if (!session) {
+      return ApiResponseBuilder.send(
+        res,
+        401,
+        ApiResponseBuilder.error(
+          "Invalid session",
+          {
+            code: "INVALID_SESSION",
+            details:
+              "Your session has expired or is invalid. Please login again.",
+          },
+          req.requestId
+        )
+      );
+    }
+
+    await Session.findByIdAndDelete(sessionId);
+
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Logged out successfully",
-        undefined,
+        {
+          sessionId,
+          logoutTime: new Date().toISOString(),
+        },
         undefined,
         req.requestId
       )
@@ -368,8 +411,11 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     });
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationToken);
+    // Add email sending to queue
+    emailQueue.addToQueue({
+      email: user.email,
+      token: verificationToken,
+    });
 
     return ApiResponseBuilder.send(
       res,

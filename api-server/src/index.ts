@@ -4,14 +4,15 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { connectDB } from "./config/db";
-import { requestIdMiddleware } from "./middleware/request-id";
 
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import sessionRoutes from "./routes/session.routes";
 import orgRoutes from "./routes/org.routes";
-import errorHandler from "./middlewares/errorHandler";
 import exampleRoutes from "./routes/example";
+
+import errorHandler from "./middlewares/errorHandler";
+import { requestIdMiddleware } from "./middlewares/request-id";
 
 dotenv.config();
 
