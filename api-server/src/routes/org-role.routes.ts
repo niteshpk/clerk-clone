@@ -5,12 +5,12 @@ import {
   updateOrganizationRole,
   deleteOrganizationRole,
   getOrganizationRoles,
-} from "../controllers/organizationRole";
+} from "../controllers/org-role.controller";
 import { validateRequest } from "../middlewares/validateRequest";
 import {
   createOrganizationRoleSchema,
   updateOrganizationRoleSchema,
-} from "../validations/organizationRole";
+} from "../validations/org-role";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { OrganizationRole } from "../models/organizationRole";
+import { OrganizationRole } from "../models/org-role";
 import mongoose from "mongoose";
 import { ApiResponseBuilder } from "../types/api-response";
 import { transformDocument } from "../utils/transform";
