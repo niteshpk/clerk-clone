@@ -20,6 +20,28 @@ export type ApiResponse<T> = {
 };
 
 export class ApiResponseBuilder {
+  private static cleanData<T>(data: T): T {
+    if (data === null || data === undefined) {
+      return data;
+    }
+
+    if (Array.isArray(data)) {
+      return data.map((item) => this.cleanData(item)) as T;
+    }
+
+    if (typeof data === "object") {
+      const cleaned: any = {};
+      for (const [key, value] of Object.entries(data)) {
+        if (key !== "__v") {
+          cleaned[key] = this.cleanData(value);
+        }
+      }
+      return cleaned as T;
+    }
+
+    return data;
+  }
+
   static success<T>(
     message: string,
     data?: T,
@@ -29,7 +51,7 @@ export class ApiResponseBuilder {
     return {
       success: true,
       message,
-      data,
+      data: data ? this.cleanData(data) : undefined,
       pagination,
       timestamp: new Date().toISOString(),
       requestId,
@@ -59,7 +81,11 @@ export class ApiResponseBuilder {
     statusCode: number,
     response: ApiResponse<T>
   ): Response {
-    return res.status(statusCode).json(response);
+    const cleanedResponse = {
+      ...response,
+      data: response.data ? this.cleanData(response.data) : undefined,
+    };
+    return res.status(statusCode).json(cleanedResponse);
   }
 
   // New helper methods for common scenarios
