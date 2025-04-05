@@ -7,6 +7,11 @@ import {
   deleteOrg,
 } from "../controllers/org.controller";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { validateRequest } from "../middlewares/validateRequest";
+import {
+  createOrgSchema,
+  updateOrgSchema,
+} from "../validations/org.validation";
 
 const router = Router();
 
@@ -14,7 +19,7 @@ const router = Router();
 router.use(authMiddleware);
 
 // POST /api/orgs - Create a new organization
-router.post("/", createOrg);
+router.post("/", validateRequest(createOrgSchema), createOrg);
 
 // GET /api/orgs - Get all organizations for the current user
 router.get("/", getMyOrgs);
@@ -23,7 +28,7 @@ router.get("/", getMyOrgs);
 router.get("/:id", getOrgById);
 
 // PUT /api/orgs/:id - Update organization
-router.put("/:id", updateOrg);
+router.put("/:id", validateRequest(updateOrgSchema), updateOrg);
 
 // DELETE /api/orgs/:id - Delete organization
 router.delete("/:id", deleteOrg);

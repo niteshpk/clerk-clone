@@ -1,24 +1,46 @@
 import { Request, Response } from "express";
 import Organization from "../models/org.model";
 import { ApiResponseBuilder } from "../types/api-response";
+import { transformDocument } from "../utils/transform";
+
+// Helper function to generate a unique slug
+const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+};
 
 export const createOrg = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
     const userId = res.locals.userId;
 
+    // Generate a unique slug
+    const baseSlug = generateSlug(name);
+    let slug = baseSlug;
+    let counter = 1;
+
+    // Check if slug exists and append a counter if it does
+    while (await Organization.findOne({ slug })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     const org = await Organization.create({
       name,
-      ownerId: userId,
-      members: [userId],
+      slug,
+      created_by: userId,
     });
+
+    const orgData = transformDocument(org.toObject());
 
     return ApiResponseBuilder.send(
       res,
       201,
       ApiResponseBuilder.created(
         "Organization created successfully",
-        { org },
+        { org: orgData },
         req.requestId
       )
     );
@@ -39,14 +61,15 @@ export const createOrg = async (req: Request, res: Response) => {
 export const getMyOrgs = async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
-    const orgs = await Organization.find({ members: userId });
+    const orgs = await Organization.find({ created_by: userId }).lean();
+    const transformedOrgs = transformDocument(orgs);
 
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Organizations retrieved successfully",
-        { orgs },
+        { orgs: transformedOrgs },
         undefined,
         req.requestId
       )
@@ -72,8 +95,8 @@ export const getOrgById = async (req: Request, res: Response) => {
 
     const org = await Organization.findOne({
       _id: id,
-      members: userId,
-    });
+      created_by: userId,
+    }).lean();
 
     if (!org) {
       return ApiResponseBuilder.send(
@@ -91,12 +114,14 @@ export const getOrgById = async (req: Request, res: Response) => {
       );
     }
 
+    const transformedOrg = transformDocument(org);
+
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Organization retrieved successfully",
-        { org },
+        { org: transformedOrg },
         undefined,
         req.requestId
       )
@@ -123,7 +148,7 @@ export const updateOrg = async (req: Request, res: Response) => {
 
     const org = await Organization.findOne({
       _id: id,
-      ownerId: userId,
+      created_by: userId,
     });
 
     if (!org) {
@@ -142,15 +167,30 @@ export const updateOrg = async (req: Request, res: Response) => {
       );
     }
 
-    org.name = name;
+    // If name is being updated, generate a new slug
+    if (name && name !== org.name) {
+      const baseSlug = generateSlug(name);
+      let slug = baseSlug;
+      let counter = 1;
+
+      while (await Organization.findOne({ slug, _id: { $ne: id } })) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+
+      org.name = name;
+      org.slug = slug;
+    }
+
     await org.save();
+    const orgData = transformDocument(org.toObject());
 
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Organization updated successfully",
-        { org },
+        { org: orgData },
         undefined,
         req.requestId
       )
@@ -176,7 +216,7 @@ export const deleteOrg = async (req: Request, res: Response) => {
 
     const org = await Organization.findOneAndDelete({
       _id: id,
-      ownerId: userId,
+      created_by: userId,
     });
 
     if (!org) {

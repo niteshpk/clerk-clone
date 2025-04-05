@@ -23,6 +23,10 @@
 }
 ```
 
+**Validation Rules:**
+
+- `name`: Required, 2-50 characters
+
 **Success Response (201):**
 
 ```json
@@ -33,10 +37,27 @@
     "org": {
       "_id": "org_123",
       "name": "My Organization",
-      "ownerId": "user_123",
-      "members": ["user_123"],
-      "createdAt": "2024-04-05T12:00:00.000Z",
-      "updatedAt": "2024-04-05T12:00:00.000Z"
+      "slug": "my-organization",
+      "created_by": "user_123",
+      "created_at": "2024-04-05T12:00:00.000Z",
+      "updated_at": "2024-04-05T12:00:00.000Z"
+    }
+  },
+  "timestamp": "2024-04-05T12:00:00.000Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Error Response (400):**
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "fields": {
+      "name": "Organization name must be between 2 and 50 characters"
     }
   },
   "timestamp": "2024-04-05T12:00:00.000Z",
@@ -48,7 +69,7 @@
 
 **Endpoint:** `GET /api/orgs`
 
-**Description:** Get all organizations where the current user is a member.
+**Description:** Get all organizations created by the current user.
 
 **Headers:**
 
@@ -69,10 +90,10 @@
       {
         "_id": "org_123",
         "name": "My Organization",
-        "ownerId": "user_123",
-        "members": ["user_123"],
-        "createdAt": "2024-04-05T12:00:00.000Z",
-        "updatedAt": "2024-04-05T12:00:00.000Z"
+        "slug": "my-organization",
+        "created_by": "user_123",
+        "created_at": "2024-04-05T12:00:00.000Z",
+        "updated_at": "2024-04-05T12:00:00.000Z"
       }
     ]
   },
@@ -105,10 +126,10 @@
     "org": {
       "_id": "org_123",
       "name": "My Organization",
-      "ownerId": "user_123",
-      "members": ["user_123"],
-      "createdAt": "2024-04-05T12:00:00.000Z",
-      "updatedAt": "2024-04-05T12:00:00.000Z"
+      "slug": "my-organization",
+      "created_by": "user_123",
+      "created_at": "2024-04-05T12:00:00.000Z",
+      "updated_at": "2024-04-05T12:00:00.000Z"
     }
   },
   "timestamp": "2024-04-05T12:00:00.000Z",
@@ -154,6 +175,10 @@
 }
 ```
 
+**Validation Rules:**
+
+- `name`: Optional, 2-50 characters
+
 **Success Response (200):**
 
 ```json
@@ -164,10 +189,10 @@
     "org": {
       "_id": "org_123",
       "name": "Updated Organization Name",
-      "ownerId": "user_123",
-      "members": ["user_123"],
-      "createdAt": "2024-04-05T12:00:00.000Z",
-      "updatedAt": "2024-04-05T12:00:00.000Z"
+      "slug": "updated-organization-name",
+      "created_by": "user_123",
+      "created_at": "2024-04-05T12:00:00.000Z",
+      "updated_at": "2024-04-05T12:00:00.000Z"
     }
   },
   "timestamp": "2024-04-05T12:00:00.000Z",
