@@ -40,7 +40,7 @@ Creates a new organization role.
 ```json
 {
   "organization_id": "string (ObjectId)",
-  "role": "string (enum: 'admin', 'member', 'viewer')"
+  "role": "string"
 }
 ```
 
@@ -138,7 +138,7 @@ Updates an existing organization role.
 
 ```json
 {
-  "role": "string (enum: 'admin', 'member', 'viewer')"
+  "role": "string"
 }
 ```
 
