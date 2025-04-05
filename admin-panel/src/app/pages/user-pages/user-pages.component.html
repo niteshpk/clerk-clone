@@ -1,0 +1,43 @@
+<app-dialog></app-dialog>
+<app-level-alert></app-level-alert>
+
+<app-header></app-header>
+
+<div class="content-container">
+  <clr-vertical-nav
+    [clrVerticalNavCollapsible]="true"
+    [clrVerticalNavCollapsed]="false"
+  >
+    <a
+      clrVerticalNavLink
+      routerLink="/user/first-page"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+    >
+      <cds-icon clrVerticalNavIcon shape="user"></cds-icon>
+      First Page
+    </a>
+    <a
+      clrVerticalNavLink
+      routerLink="/user/second-page"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+    >
+      <cds-icon clrVerticalNavIcon shape="bolt"></cds-icon>
+      Second Page
+    </a>
+    <a
+      clrVerticalNavLink
+      routerLink="/user/blank-page"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+    >
+      <cds-icon clrVerticalNavIcon shape="bolt"></cds-icon>
+      Blank Page
+    </a>
+  </clr-vertical-nav>
+
+  <div class="content-area">
+    <router-outlet></router-outlet>
+  </div>
+</div>

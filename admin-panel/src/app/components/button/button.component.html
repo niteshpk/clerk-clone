@@ -1,0 +1,8 @@
+<button
+  [type]="type"
+  class="btn {{ btnType }} {{ classes }}"
+  (click)="handleClick($event)"
+  [disabled]="disabled"
+>
+  <ng-content></ng-content>
+</button>

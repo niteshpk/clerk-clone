@@ -1,0 +1,64 @@
+<section class="title">
+  <div class="welcome">VMWare</div>
+  <div class="hint">Signup and start your journey!</div>
+</section>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-group">
+  <clr-input-container>
+    <label class="clr-sr-only">Name</label>
+    <input
+      type="text"
+      autocomplete="name"
+      name="name"
+      clrInput
+      placeholder="Enter name"
+      [formControlName]="'name'"
+    />
+  </clr-input-container>
+  <clr-input-container>
+    <label class="clr-sr-only">E-mail</label>
+    <input
+      type="email"
+      autocomplete="username"
+      name="username"
+      clrInput
+      placeholder="Enter e-mail"
+      [formControlName]="'email'"
+    />
+  </clr-input-container>
+  <clr-password-container>
+    <label class="clr-sr-only">Password</label>
+    <input
+      type="password"
+      autocomplete="current-password"
+      name="password"
+      clrPassword
+      placeholder="Enter password"
+      [formControlName]="'password'"
+    />
+  </clr-password-container>
+  <clr-password-container>
+    <label class="clr-sr-only">Phone Number</label>
+    <input
+      type="text"
+      autocomplete="phone-number"
+      name="phoneNumber"
+      clrPassword
+      placeholder="Enter phone number"
+      [formControlName]="'phoneNumber'"
+    />
+  </clr-password-container>
+  <clr-checkbox-wrapper>
+    <label>Remember me</label>
+    <input
+      type="checkbox"
+      name="rememberMe"
+      clrCheckbox
+      [formControlName]="'rememberMe'"
+    />
+  </clr-checkbox-wrapper>
+  <div class="error active" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+    Signup
+  </button>
+  <a [routerLink]="'/auth/login'" class="signup">Already have an account</a>
+</form>
