@@ -19,7 +19,9 @@
 ```json
 {
   "email": "user@example.com",
-  "password": "your_secure_password"
+  "password": "your_secure_password",
+  "fullName": "John Doe",
+  "phone": "+1234567890"
 }
 ```
 
@@ -30,7 +32,32 @@
   "success": true,
   "message": "Registration successful. Please check your email to verify your account.",
   "data": {
-    "email": "user@example.com"
+    "user": {
+      "id": "user_123",
+      "email": "user@example.com",
+      "fullName": "John Doe",
+      "phone": "+1234567890",
+      "isEmailVerified": false,
+      "isPhoneVerified": false,
+      "lastLogin": null,
+      "createdAt": "2024-04-05T12:00:00.000Z",
+      "updatedAt": "2024-04-05T12:00:00.000Z"
+    }
+  },
+  "timestamp": "2024-04-05T12:00:00.000Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Error Response (400) - Invalid Phone Number:**
+
+```json
+{
+  "success": false,
+  "message": "Invalid phone number",
+  "error": {
+    "code": "INVALID_PHONE",
+    "details": "Phone number must be in E.164 format"
   },
   "timestamp": "2024-04-05T12:00:00.000Z",
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
@@ -81,7 +108,18 @@
   "success": true,
   "message": "Login successful",
   "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "user_123",
+      "email": "user@example.com",
+      "fullName": "John Doe",
+      "phone": "+1234567890",
+      "isEmailVerified": true,
+      "isPhoneVerified": false,
+      "lastLogin": "2024-04-05T12:00:00.000Z",
+      "createdAt": "2024-04-05T12:00:00.000Z",
+      "updatedAt": "2024-04-05T12:00:00.000Z"
+    }
   },
   "timestamp": "2024-04-05T12:00:00.000Z",
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
@@ -123,11 +161,11 @@
   "success": true,
   "message": "Logged out successfully",
   "data": {
-    "sessionId": "session_123",
-    "logoutTime": "2024-04-05T12:00:00.000Z"
+    "sessionId": "65f0ee85929231ae9940c0fb",
+    "logoutTime": "2024-04-05T10:01:52.556Z"
   },
-  "timestamp": "2024-04-05T12:00:00.000Z",
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+  "timestamp": "2024-04-05T10:01:52.556Z",
+  "requestId": "599c73c1-f19a-4c90-a913-b96a83e43837"
 }
 ```
 

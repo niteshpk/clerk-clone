@@ -7,10 +7,24 @@ import EmailVerification from "../models/email-verification.model";
 import { generateVerificationToken } from "../services/email.service";
 import { ApiResponseBuilder } from "../types/api-response";
 import { emailQueue } from "../services/email-queue.service";
+import { Types } from "mongoose";
+
+// Helper function to transform _id to id and handle ObjectId and Date conversions
+const transformUser = (user: any) => {
+  if (!user) return null;
+  const { _id, createdAt, updatedAt, lastLogin, ...rest } = user;
+  return {
+    id: _id instanceof Types.ObjectId ? _id.toString() : _id,
+    ...rest,
+    createdAt: createdAt instanceof Date ? createdAt.toISOString() : createdAt,
+    updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : updatedAt,
+    lastLogin: lastLogin instanceof Date ? lastLogin.toISOString() : lastLogin,
+  };
+};
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, fullName, phone } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -26,10 +40,31 @@ export const register = async (req: Request, res: Response) => {
       );
     }
 
+    // Validate phone number if provided
+    if (phone) {
+      const phoneRegex = /^\+?[1-9]\d{1,14}$/; // E.164 format
+      if (!phoneRegex.test(phone)) {
+        return ApiResponseBuilder.send(
+          res,
+          400,
+          ApiResponseBuilder.error(
+            "Invalid phone number",
+            {
+              code: "INVALID_PHONE",
+              details: "Phone number must be in E.164 format",
+            },
+            req.requestId
+          )
+        );
+      }
+    }
+
     const hashed = await hash(password, 10);
     const user = await User.create({
       email,
       passwordHash: hashed,
+      fullName,
+      phone,
     });
 
     // Create email verification record
@@ -46,12 +81,17 @@ export const register = async (req: Request, res: Response) => {
       token: verificationToken,
     });
 
+    // Get the user document as a plain object
+    const userDoc = await User.findById(user._id)
+      .select("-passwordHash")
+      .lean();
+
     return ApiResponseBuilder.send(
       res,
       201,
       ApiResponseBuilder.created(
         "Registration successful. Please check your email to verify your account.",
-        { email: user.email },
+        { user: transformUser(userDoc) },
         req.requestId
       )
     );
@@ -137,12 +177,17 @@ export const verifyEmail = async (req: Request, res: Response) => {
     user.isEmailVerified = true;
     await user.save();
 
+    // Get updated user document
+    const updatedUser = await User.findById(user._id)
+      .select("-passwordHash")
+      .lean();
+
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Email verified successfully",
-        { email: user.email },
+        { user: transformUser(updatedUser) },
         undefined,
         req.requestId
       )
@@ -256,6 +301,10 @@ export const login = async (req: Request, res: Response) => {
       );
     }
 
+    // Update last login time
+    user.lastLogin = new Date();
+    await user.save();
+
     const session = await Session.create({ user: user._id });
     const token = jwt.sign(
       { sessionId: session._id },
@@ -265,12 +314,20 @@ export const login = async (req: Request, res: Response) => {
       }
     );
 
+    // Get updated user document
+    const updatedUser = await User.findById(user._id)
+      .select("-passwordHash")
+      .lean();
+
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Login successful",
-        { token },
+        {
+          token,
+          user: transformUser(updatedUser),
+        },
         undefined,
         req.requestId
       )
@@ -333,7 +390,10 @@ export const logout = async (req: Request, res: Response) => {
       ApiResponseBuilder.success(
         "Logged out successfully",
         {
-          sessionId,
+          sessionId:
+            sessionId instanceof Types.ObjectId
+              ? sessionId.toString()
+              : sessionId,
           logoutTime: new Date().toISOString(),
         },
         undefined,
@@ -417,12 +477,17 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
       token: verificationToken,
     });
 
+    // Get user document
+    const userDoc = await User.findById(user._id)
+      .select("-passwordHash")
+      .lean();
+
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Verification email sent successfully",
-        { email },
+        { user: transformUser(userDoc) },
         undefined,
         req.requestId
       )

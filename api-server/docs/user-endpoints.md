@@ -22,9 +22,13 @@
   "message": "User details retrieved successfully",
   "data": {
     "user": {
-      "_id": "user_123",
+      "id": "user_123",
       "email": "user@example.com",
+      "fullName": "John Doe",
+      "phone": "+1234567890",
       "isEmailVerified": true,
+      "isPhoneVerified": true,
+      "lastLogin": "2024-04-05T12:00:00.000Z",
       "createdAt": "2024-04-05T12:00:00.000Z",
       "updatedAt": "2024-04-05T12:00:00.000Z"
     }
@@ -72,9 +76,13 @@
   "data": {
     "users": [
       {
-        "_id": "user_123",
+        "id": "user_123",
         "email": "user1@example.com",
+        "fullName": "John Doe",
+        "phone": "+1234567890",
         "isEmailVerified": true,
+        "isPhoneVerified": true,
+        "lastLogin": "2024-04-05T12:00:00.000Z",
         "createdAt": "2024-04-05T12:00:00.000Z",
         "updatedAt": "2024-04-05T12:00:00.000Z"
       }
@@ -107,7 +115,7 @@
   "message": "User retrieved successfully",
   "data": {
     "user": {
-      "_id": "user_123",
+      "id": "user_123",
       "email": "user@example.com",
       "isEmailVerified": true,
       "createdAt": "2024-04-05T12:00:00.000Z",
@@ -153,7 +161,11 @@
 
 ```json
 {
-  "email": "updated@example.com"
+  "email": "updated@example.com",
+  "fullName": "John Doe",
+  "phone": "+1234567890",
+  "isEmailVerified": true,
+  "isPhoneVerified": true
 }
 ```
 
@@ -165,12 +177,31 @@
   "message": "User updated successfully",
   "data": {
     "user": {
-      "_id": "user_123",
+      "id": "user_123",
       "email": "updated@example.com",
+      "fullName": "John Doe",
+      "phone": "+1234567890",
       "isEmailVerified": true,
+      "isPhoneVerified": true,
+      "lastLogin": "2024-04-05T12:00:00.000Z",
       "createdAt": "2024-04-05T12:00:00.000Z",
       "updatedAt": "2024-04-05T12:00:00.000Z"
     }
+  },
+  "timestamp": "2024-04-05T12:00:00.000Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Error Response (400) - Invalid Phone Number:**
+
+```json
+{
+  "success": false,
+  "message": "Invalid phone number",
+  "error": {
+    "code": "INVALID_PHONE",
+    "details": "Phone number must be in E.164 format"
   },
   "timestamp": "2024-04-05T12:00:00.000Z",
   "requestId": "550e8400-e29b-41d4-a716-446655440000"

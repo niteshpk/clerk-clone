@@ -1,11 +1,25 @@
 import { Request, Response } from "express";
 import User from "../models/user.model";
 import { ApiResponseBuilder } from "../types/api-response";
+import { Types } from "mongoose";
+
+// Helper function to transform _id to id and handle ObjectId and Date conversions
+const transformUser = (user: any) => {
+  if (!user) return null;
+  const { _id, createdAt, updatedAt, lastLogin, ...rest } = user;
+  return {
+    id: _id instanceof Types.ObjectId ? _id.toString() : _id,
+    ...rest,
+    createdAt: createdAt instanceof Date ? createdAt.toISOString() : createdAt,
+    updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : updatedAt,
+    lastLogin: lastLogin instanceof Date ? lastLogin.toISOString() : lastLogin,
+  };
+};
 
 export const getCurrentUser = async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
-    const user = await User.findById(userId).select("-passwordHash");
+    const user = await User.findById(userId).select("-passwordHash").lean();
 
     if (!user) {
       return ApiResponseBuilder.send(
@@ -27,7 +41,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
       200,
       ApiResponseBuilder.success(
         "User details retrieved successfully",
-        { user },
+        { user: transformUser(user) },
         undefined,
         req.requestId
       )
@@ -48,14 +62,14 @@ export const getCurrentUser = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find().select("-passwordHash");
+    const users = await User.find().select("-passwordHash").lean();
 
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Users retrieved successfully",
-        { users },
+        { users: users.map(transformUser) },
         undefined,
         req.requestId
       )
@@ -77,7 +91,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).select("-passwordHash");
+    const user = await User.findById(id).select("-passwordHash").lean();
 
     if (!user) {
       return ApiResponseBuilder.send(
@@ -99,7 +113,7 @@ export const getUserById = async (req: Request, res: Response) => {
       200,
       ApiResponseBuilder.success(
         "User retrieved successfully",
-        { user },
+        { user: transformUser(user) },
         undefined,
         req.requestId
       )
@@ -139,11 +153,38 @@ export const updateUser = async (req: Request, res: Response) => {
       );
     }
 
+    // Validate phone number if provided
+    if (req.body.phone) {
+      const phoneRegex = /^\+?[1-9]\d{1,14}$/; // E.164 format
+      if (!phoneRegex.test(req.body.phone)) {
+        return ApiResponseBuilder.send(
+          res,
+          400,
+          ApiResponseBuilder.error(
+            "Invalid phone number",
+            {
+              code: "INVALID_PHONE",
+              details: "Phone number must be in E.164 format",
+            },
+            req.requestId
+          )
+        );
+      }
+    }
+
+    const updateData = {
+      ...req.body,
+      // Ensure passwordHash is not accidentally updated
+      passwordHash: undefined,
+    };
+
     const user = await User.findByIdAndUpdate(
       id,
-      { $set: req.body },
+      { $set: updateData },
       { new: true, runValidators: true }
-    ).select("-passwordHash");
+    )
+      .select("-passwordHash")
+      .lean();
 
     if (!user) {
       return ApiResponseBuilder.send(
@@ -165,7 +206,7 @@ export const updateUser = async (req: Request, res: Response) => {
       200,
       ApiResponseBuilder.success(
         "User updated successfully",
-        { user },
+        { user: transformUser(user) },
         undefined,
         req.requestId
       )
