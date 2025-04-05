@@ -10,6 +10,7 @@ import userRoutes from "./routes/user.routes";
 import sessionRoutes from "./routes/session.routes";
 import orgRoutes from "./routes/org.routes";
 import exampleRoutes from "./routes/example";
+import orgRoleRoutes from "./routes/organizationRole";
 
 import errorHandler from "./middlewares/errorHandler";
 import { requestIdMiddleware } from "./middlewares/request-id";
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/orgs", orgRoutes);
+app.use("/api/org-roles", orgRoleRoutes);
 app.use("/api/example", exampleRoutes);
 app.use(errorHandler);
 
