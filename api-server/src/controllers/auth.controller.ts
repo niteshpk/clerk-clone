@@ -69,25 +69,47 @@ export const register = async (req: Request, res: Response) => {
 
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
-    const token = req.query.token as string;
+    const { token, email } = req.query;
 
-    if (!token) {
+    if (!token || !email) {
+      const fields: Record<string, string> = {};
+      if (!token) fields.token = "Token is required";
+      if (!email) fields.email = "Email is required";
+
       return ApiResponseBuilder.send(
         res,
         400,
         ApiResponseBuilder.error(
-          "Verification token is required",
-          { code: "MISSING_TOKEN" },
+          "Verification token and email are required",
+          {
+            code: "MISSING_PARAMETERS",
+            fields,
+          },
+          req.requestId
+        )
+      );
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return ApiResponseBuilder.send(
+        res,
+        404,
+        ApiResponseBuilder.error(
+          "User not found",
+          { code: "USER_NOT_FOUND" },
           req.requestId
         )
       );
     }
 
     const verification = await EmailVerification.findOne({
+      userId: user._id,
       token,
       expiresAt: { $gt: new Date() },
       isVerified: false,
-    }).populate("userId");
+    });
 
     if (!verification) {
       return ApiResponseBuilder.send(
@@ -95,7 +117,11 @@ export const verifyEmail = async (req: Request, res: Response) => {
         400,
         ApiResponseBuilder.error(
           "Invalid or expired verification token",
-          { code: "INVALID_TOKEN" },
+          {
+            code: "INVALID_TOKEN",
+            details:
+              "The verification token is invalid, expired, or does not match the provided email address",
+          },
           req.requestId
         )
       );
@@ -106,18 +132,15 @@ export const verifyEmail = async (req: Request, res: Response) => {
     await verification.save();
 
     // Update user's email verification status
-    const user = await User.findById(verification.userId);
-    if (user) {
-      user.isEmailVerified = true;
-      await user.save();
-    }
+    user.isEmailVerified = true;
+    await user.save();
 
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Email verified successfully",
-        { email: user?.email },
+        { email: user.email },
         undefined,
         req.requestId
       )

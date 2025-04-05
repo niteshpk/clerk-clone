@@ -13,7 +13,7 @@ export const generateVerificationToken = () => {
 };
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+  const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}&email=${email}`;
 
   const mailOptions = {
     from: "noreply@clerk-clone.com",
