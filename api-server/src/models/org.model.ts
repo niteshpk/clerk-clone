@@ -84,7 +84,4 @@ OrgSchema.pre("save", function (next) {
   next();
 });
 
-// Create a unique index on slug
-OrgSchema.index({ slug: 1 }, { unique: true });
-
 export default mongoose.model<IOrganization>("Organization", OrgSchema);

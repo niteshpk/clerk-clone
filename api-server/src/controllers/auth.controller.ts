@@ -305,7 +305,13 @@ export const login = async (req: Request, res: Response) => {
     user.lastLogin = new Date();
     await user.save();
 
-    const session = await Session.create({ user: user._id });
+    const session = await Session.create({
+      user: user._id,
+      ip_address: req.ip,
+      user_agent: req.headers["user-agent"] || "",
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      is_active: true,
+    });
     const token = jwt.sign(
       { sessionId: session._id },
       process.env.JWT_SECRET!,
