@@ -5,10 +5,29 @@
       <span class="title">VMWare</span>
     </a>
   </div>
-  <div class="settings">
-    <a class="nav-link nav-icon" (click)="logout()">
-      <cds-icon shape="logout" *ngIf="!isLoggingOut"></cds-icon>
-      <span class="spinner spinner-inline" *ngIf="isLoggingOut"> </span>
-    </a>
+  <div class="header-actions">
+    <clr-dropdown>
+      <button
+        class="nav-icon"
+        clrDropdownTrigger
+        aria-label="toggle settings menu"
+      >
+        <cds-icon shape="user"></cds-icon>
+        <cds-icon shape="angle" direction="down"></cds-icon>
+      </button>
+
+      <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+        <div clrDropdownItem aria-disabled="true" [clrDisabled]="true">
+          <cds-icon shape="user"></cds-icon>
+          <span>{{ user?.fullName }}</span>
+        </div>
+        <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
+        <div clrDropdownItem (click)="logout()">
+          <cds-icon shape="logout"></cds-icon>
+          <span class="spinner spinner-inline" *ngIf="isLoggingOut"></span>
+          <span> Log out</span>
+        </div>
+      </clr-dropdown-menu>
+    </clr-dropdown>
   </div>
 </header>

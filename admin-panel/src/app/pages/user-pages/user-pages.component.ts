@@ -1,20 +1,18 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 import {
   Router,
   RouterLink,
   RouterLinkActive,
   RouterOutlet,
-} from '@angular/router';
-import { ClrModalModule, ClrVerticalNavModule } from '@clr/angular';
-import { NgIf } from '@angular/common';
-import { AlertComponent } from '../../components/alert/alert.component';
-import { AppLevelAlertComponent } from '../../components/app-level-alert/app-level-alert.component';
-import { DialogComponent } from '../../components/dialog/dialog.component';
-import { HeaderComponent } from '../../components/header/header.component';
-import { AppLevelAlertService } from '../../services/app-level-alert/app-level-alert.service';
+} from "@angular/router";
+import { ClrModalModule, ClrVerticalNavModule } from "@clr/angular";
+import { AppLevelAlertComponent } from "../../components/app-level-alert/app-level-alert.component";
+import { DialogComponent } from "../../components/dialog/dialog.component";
+import { HeaderComponent } from "../../components/header/header.component";
+import { AppLevelAlertService } from "../../services/app-level-alert/app-level-alert.service";
 
 @Component({
-  selector: 'app-user-pages',
+  selector: "app-user-pages",
   standalone: true,
   imports: [
     RouterOutlet,
@@ -27,8 +25,8 @@ import { AppLevelAlertService } from '../../services/app-level-alert/app-level-a
     DialogComponent,
     HeaderComponent,
   ],
-  templateUrl: './user-pages.component.html',
-  styleUrl: './user-pages.component.scss',
+  templateUrl: "./user-pages.component.html",
+  styleUrl: "./user-pages.component.scss",
 })
 export class UserPagesComponent {
   isLoggingOut = false;
@@ -45,13 +43,13 @@ export class UserPagesComponent {
   logout() {
     this.isLoggingOut = true;
     this.alertService.show({
-      message: 'Logging out...',
-      type: 'info',
-      alertType: 'info',
+      message: "Logging out...",
+      type: "info",
+      alertType: "info",
     });
     setTimeout(() => {
       this.isLoggingOut = false;
-      this.router.navigateByUrl('/auth/login');
+      this.router.navigateByUrl("/auth/login");
     }, 1000);
   }
 }
