@@ -6,7 +6,33 @@
     </a>
   </div>
   <div class="header-actions">
+    <button
+      class="btn btn-link nav-link"
+      (click)="toggleTheme()"
+      [attr.aria-label]="
+        (themeService.theme$ | async) === 'light'
+          ? 'Switch to dark mode'
+          : 'Switch to light mode'
+      "
+    >
+      <cds-icon
+        [attr.shape]="
+          (themeService.theme$ | async) === 'light' ? 'moon' : 'sun'
+        "
+      ></cds-icon>
+      {{ (themeService.theme$ | async) === "light" ? "Dark" : "Light" }}
+    </button>
+
     <clr-dropdown>
+      <button class="nav-text" clrDropdownTrigger>
+        {{ user?.email }}
+        <cds-icon shape="angle" direction="down"></cds-icon>
+      </button>
+      <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>
+        <a clrDropdownItem (click)="logout()">Logout</a>
+      </clr-dropdown-menu>
+    </clr-dropdown>
+    <!-- <clr-dropdown>
       <button
         class="nav-icon"
         clrDropdownTrigger
@@ -31,6 +57,6 @@
           <span>Log out</span>
         </div>
       </clr-dropdown-menu>
-    </clr-dropdown>
+    </clr-dropdown> -->
   </div>
 </header>

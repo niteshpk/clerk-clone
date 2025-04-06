@@ -13,6 +13,7 @@ import { BaseComponent } from "../base-component/base-component.component";
 import { take } from "rxjs";
 import { Store } from "@ngrx/store";
 import { logoutSuccess } from "../../store/auth/auth.actions";
+import { Theme, ThemeService } from "../../services/theme/theme.service";
 
 @Component({
   selector: "app-header",
@@ -29,13 +30,23 @@ import { logoutSuccess } from "../../store/auth/auth.actions";
 })
 export class HeaderComponent extends BaseComponent {
   user: User | null = null;
+  theme: Theme = "dark";
 
-  constructor(private authService: AuthService, private store: Store) {
+  constructor(
+    private authService: AuthService,
+    private store: Store,
+    public themeService: ThemeService
+  ) {
     super();
 
     this.store.select(selectUser).subscribe((user) => {
       this.user = user;
     });
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+    this.theme = this.theme === "light" ? "dark" : "light";
   }
 
   logout() {
