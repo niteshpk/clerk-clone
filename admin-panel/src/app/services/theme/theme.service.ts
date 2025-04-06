@@ -29,7 +29,6 @@ export class ThemeService {
   setTheme(theme: Theme): void {
     this.themeSubject.next(theme);
     this.localStorageService.setItem("theme", theme);
-    console.log(document.body);
     document.body.setAttribute("cds-theme", theme);
   }
 

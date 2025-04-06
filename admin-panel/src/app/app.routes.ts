@@ -1,7 +1,7 @@
 import { Routes } from "@angular/router";
 import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
 import { AuthPagesComponent } from "./pages/auth/auth-pages/auth-pages.component";
-import { ForgetPasswordPageComponent } from "./pages/auth/forget-password-page/forget-password-page.component";
+import { ForgotPasswordPageComponent } from "./pages/auth/forgot-password-page/forgot-password-page.component";
 import { LoginPageComponent } from "./pages/auth/login-page/login-page.component";
 import { ResetPasswordPageComponent } from "./pages/auth/reset-password-page/reset-password-page.component";
 import { SignupPageComponent } from "./pages/auth/signup-page/signup-page.component";
@@ -29,8 +29,8 @@ export const routes: Routes = [
         component: SignupPageComponent,
       },
       {
-        path: "forget-password",
-        component: ForgetPasswordPageComponent,
+        path: "forgot-password",
+        component: ForgotPasswordPageComponent,
       },
       {
         path: "reset-password",

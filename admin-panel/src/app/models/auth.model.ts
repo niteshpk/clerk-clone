@@ -39,3 +39,9 @@ export type LoginRequest = {
   email: string;
   password: string;
 };
+
+export type ResetPasswordRequest = {
+  email: string;
+  password: string;
+  token: string;
+};

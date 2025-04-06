@@ -33,9 +33,7 @@ export class BaseHttpService {
       tap((response) =>
         this.logRequest("POST", url, body, options, response, 200)
       ),
-      catchError((error) =>
-        this.handleError("POST", url, body, options.headers, error)
-      )
+      catchError((error) => this.handleError("POST", url, body, options, error))
     ) as Observable<T>;
   }
 

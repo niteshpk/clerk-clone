@@ -26,8 +26,6 @@ import { AlertComponent } from "../../../components/alert/alert.component";
     RouterLink,
     NgIf,
     ReactiveFormsModule,
-    // @ts-ignore
-    BaseComponent,
     AlertComponent,
   ],
   templateUrl: "./signup-page.component.html",

@@ -6,6 +6,7 @@ import {
   RegisterResponse,
   LoginRequest,
   LoginResponse,
+  ResetPasswordRequest,
 } from "../../models/auth.model";
 import { ApiResponse } from "../../models/common.model";
 import { environment } from "../../../environments/environment";
@@ -39,5 +40,18 @@ export class AuthService extends BaseHttpService {
 
   logout(): Observable<ApiResponse<any>> {
     return this.post<ApiResponse<any>>(`${BASE_URL}/api/auth/logout`, {});
+  }
+
+  forgotPassword(email: string): Observable<ApiResponse<any>> {
+    return this.post<ApiResponse<any>>(`${BASE_URL}/api/auth/forgot-password`, {
+      email,
+    });
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<ApiResponse<any>> {
+    return this.post<ApiResponse<any>>(
+      `${BASE_URL}/api/auth/reset-password`,
+      request
+    );
   }
 }

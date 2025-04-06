@@ -7,6 +7,7 @@ import { initAuth } from "./store/auth/auth.actions";
 
 import "@cds/core/icon/register.js";
 import { ClarityIcons, userIcon, checkCircleIcon } from "@cds/core/icon";
+import { ThemeService } from "./services/theme/theme.service";
 
 ClarityIcons.addIcons(userIcon);
 ClarityIcons.addIcons(checkCircleIcon);
@@ -19,7 +20,7 @@ ClarityIcons.addIcons(checkCircleIcon);
   styleUrl: "./app.component.scss",
 })
 export class AppComponent implements OnInit {
-  constructor(private store: Store) {}
+  constructor(private store: Store, private themeService: ThemeService) {}
 
   ngOnInit() {
     this.store.dispatch(initAuth());
