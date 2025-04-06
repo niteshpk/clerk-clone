@@ -36,6 +36,10 @@ export class AuthService extends BaseHttpService {
     return this.post<LoginResponse>(`${BASE_URL}/api/auth/login`, user);
   }
 
+  logout(): Observable<ApiResponse<any>> {
+    return this.post<ApiResponse<any>>(`${BASE_URL}/api/auth/logout`, {});
+  }
+
   //   // Fetch all users
   //   getUsers(): Observable<User[]> {
   //     return this.get<User[]>(BASE_URL + this.apiUrl);

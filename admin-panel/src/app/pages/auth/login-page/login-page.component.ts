@@ -90,13 +90,6 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
           return;
         }
 
-        console.log(res);
-        this.appAlertService.show({
-          message: res.message,
-          type: "info",
-          alertType: "info",
-        });
-
         this.localStorageService.setItem("token", res.data.token);
         this.localStorageService.setItem("user", res.data.user);
 

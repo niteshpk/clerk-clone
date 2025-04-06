@@ -22,10 +22,13 @@
           <span>{{ user?.fullName }}</span>
         </div>
         <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-        <div clrDropdownItem (click)="logout()">
+        <div
+          clrDropdownItem
+          (click)="logout()"
+          [clrDisabled]="!!(isLoading$ | async)"
+        >
           <cds-icon shape="logout"></cds-icon>
-          <span class="spinner spinner-inline" *ngIf="isLoggingOut"></span>
-          <span> Log out</span>
+          <span>Log out</span>
         </div>
       </clr-dropdown-menu>
     </clr-dropdown>

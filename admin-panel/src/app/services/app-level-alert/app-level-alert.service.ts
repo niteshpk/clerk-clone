@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { AlertOptions, AlertType, AlertState } from './app-level-alert.types';
-import { StatusTypes } from '@cds/core/internal';
-import { v4 as uuidv4 } from 'uuid';
+import { Injectable } from "@angular/core";
+import { Subject, Observable } from "rxjs";
+import { AlertOptions, AlertType, AlertState } from "./app-level-alert.types";
+import { StatusTypes } from "@cds/core/internal";
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AppLevelAlertService {
   readonly DEFAULT_OPTIONS: AlertOptions = {
-    type: 'neutral',
-    message: '',
-    icon: 'info-standard',
+    type: "neutral",
+    message: "",
+    icon: "info-standard",
     closable: true,
-    closeButtonLabel: 'Close',
+    closeButtonLabel: "Close",
   };
 
   private optionsSubject$: Subject<AlertState> = new Subject<AlertState>();
@@ -22,15 +22,15 @@ export class AppLevelAlertService {
 
   constructor() {}
 
-  show(options: Partial<AlertOptions> = {}): string {
+  show(options: Partial<AlertOptions> = {}, autoClose = true): string {
     const id = uuidv4();
 
-    if (!('icon' in options)) {
-      options.icon = this.getIconForType(options.alertType || 'info');
+    if (!("icon" in options)) {
+      options.icon = this.getIconForType(options.alertType || "info");
     }
 
-    if (!('type' in options)) {
-      options.type = this.getStatusType(options.alertType || 'info');
+    if (!("type" in options)) {
+      options.type = this.getStatusType(options.alertType || "info");
     }
 
     const newAlert: AlertOptions = {
@@ -42,6 +42,12 @@ export class AppLevelAlertService {
 
     this.alerts.push(newAlert);
     this.optionsSubject$.next({ alerts: [...this.alerts] });
+
+    if (autoClose) {
+      setTimeout(() => {
+        this.hide(id);
+      }, 3000);
+    }
     return id;
   }
 
@@ -56,20 +62,20 @@ export class AppLevelAlertService {
 
   private getIconForType(alertType: AlertType): string {
     const iconsMap: Record<AlertType, string> = {
-      info: 'info-standard',
-      success: 'success-standard',
-      warning: 'warning-standard',
-      danger: 'error-standard',
+      info: "info-standard",
+      success: "success-standard",
+      warning: "warning-standard",
+      danger: "error-standard",
     };
     return iconsMap[alertType];
   }
 
   private getStatusType(alertType: AlertType): StatusTypes {
     const typeMap: Record<AlertType, StatusTypes> = {
-      info: 'info',
-      success: 'success',
-      warning: 'warning',
-      danger: 'danger',
+      info: "info",
+      success: "success",
+      warning: "warning",
+      danger: "danger",
     };
     return typeMap[alertType];
   }
