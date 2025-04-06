@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { catchError, finalize, of, take, tap } from "rxjs";
-import { LocalStorageService } from "../../services/storage/local-storage.service";
+import { LocalStorageService } from "@services/storage/local-storage.service";
 import * as AuthActions from "./auth.actions";
 import { Router } from "@angular/router";
-import { AuthService } from "../../services/auth/auth.service";
+import { AuthService } from "@services/auth/auth.service";
 import { Store } from "@ngrx/store";
-import { User } from "../../models/user.model";
+import { User } from "@models/user.model";
 
 @Injectable()
 export class AuthEffects {

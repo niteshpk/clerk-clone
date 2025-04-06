@@ -9,12 +9,12 @@ import {
 } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { ClrDropdownModule, ClrFormsModule } from "@clr/angular";
-import { AuthService } from "../../../services/auth/auth.service";
-import { BaseComponent } from "../../../components/base-component/base-component.component";
+import { AuthService } from "@services/auth/auth.service";
+import { BaseComponent } from "@components/base-component/base-component.component";
 import { finalize, of, takeUntil, catchError, take } from "rxjs";
 import { Store } from "@ngrx/store";
-import { loginSuccess } from "../../../store/auth/auth.actions";
-import { selectIsAuthenticated } from "../../../store/auth/auth.selectors";
+import { loginSuccess } from "@store/auth/auth.actions";
+import { selectIsAuthenticated } from "@store/auth/auth.selectors";
 
 @Component({
   selector: "app-login-page",

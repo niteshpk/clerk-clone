@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BaseHttpService } from "../base-http/base-http.service";
+import { BaseHttpService } from "@services/base-http/base-http.service";
 import { Observable } from "rxjs";
 import {
   RegisterRequest,
@@ -7,9 +7,9 @@ import {
   LoginRequest,
   LoginResponse,
   ResetPasswordRequest,
-} from "../../models/auth.model";
-import { ApiResponse } from "../../models/common.model";
-import { environment } from "../../../environments/environment";
+} from "@models/auth.model";
+import { ApiResponse } from "@models/common.model";
+import { environment } from "@environments/environment";
 
 const BASE_URL = environment.apiUrl;
 

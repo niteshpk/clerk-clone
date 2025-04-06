@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { selectIsAuthenticated } from "../store/auth/auth.selectors";
+import { selectIsAuthenticated } from "@store/auth/auth.selectors";
 import { take, map } from "rxjs";
 
 export const authGuard = () => {
