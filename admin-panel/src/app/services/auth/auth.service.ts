@@ -1,7 +1,12 @@
 import { Injectable } from "@angular/core";
 import { BaseHttpService } from "../base-http/base-http.service";
 import { Observable } from "rxjs";
-import { RegisterRequest, RegisterResponse } from "../../models/auth.model";
+import {
+  RegisterRequest,
+  RegisterResponse,
+  LoginRequest,
+  LoginResponse,
+} from "../../models/auth.model";
 import { ApiResponse } from "../../models/common.model";
 
 const BASE_URL = "http://localhost:3000";
@@ -25,6 +30,10 @@ export class AuthService extends BaseHttpService {
       `${BASE_URL}/api/auth/resend-verification`,
       { email }
     );
+  }
+
+  login(user: LoginRequest): Observable<LoginResponse> {
+    return this.post<LoginResponse>(`${BASE_URL}/api/auth/login`, user);
   }
 
   //   // Fetch all users

@@ -1,4 +1,4 @@
-import { NgIf } from "@angular/common";
+import { AsyncPipe, NgIf } from "@angular/common";
 import { Component } from "@angular/core";
 import {
   FormControl,
@@ -14,6 +14,7 @@ import { AuthService } from "../../../services/auth/auth.service";
 import { BaseComponent } from "../../../components/base-component/base-component.component";
 import { catchError, finalize, of, take, takeUntil } from "rxjs";
 import { LocalStorageService } from "../../../services/storage/local-storage.service";
+import { AlertComponent } from "../../../components/alert/alert.component";
 
 @Component({
   selector: "app-signup-page",
@@ -27,6 +28,7 @@ import { LocalStorageService } from "../../../services/storage/local-storage.ser
     ReactiveFormsModule,
     // @ts-ignore
     BaseComponent,
+    AlertComponent,
   ],
   templateUrl: "./signup-page.component.html",
   styleUrl: "./signup-page.component.scss",
@@ -41,6 +43,7 @@ export class SignupPageComponent extends BaseComponent {
   }>;
 
   errorMessage = "";
+  successMessage = "";
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -86,7 +89,7 @@ export class SignupPageComponent extends BaseComponent {
         }
 
         console.log(res);
-        this.router.navigateByUrl("/auth/verify-email");
+        this.successMessage = res.message;
       });
   }
 }

@@ -2,7 +2,12 @@
   <div class="welcome">VMWare</div>
   <div class="hint">Signup and start your journey!</div>
 </section>
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-group">
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  class="login-group"
+  *ngIf="!successMessage"
+>
   <clr-input-container>
     <label class="clr-sr-only">Name</label>
     <input
@@ -62,3 +67,12 @@
   </button>
   <a [routerLink]="'/auth/login'" class="signup">Already have an account</a>
 </form>
+
+<div *ngIf="successMessage" class="success-container">
+  <app-alert
+    [type]="'success'"
+    [message]="successMessage"
+    class="my-4"
+  ></app-alert>
+  <a [routerLink]="'/auth/login'" class="btn btn-primary my-4"> Go to Login </a>
+</div>

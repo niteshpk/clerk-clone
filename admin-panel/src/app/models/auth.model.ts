@@ -27,3 +27,15 @@ export interface RegisterError {
   timestamp: string;
   requestId: string;
 }
+
+export type LoginResponseData = {
+  user: User;
+  token: string;
+};
+
+export type LoginResponse = ApiResponse<LoginResponseData>;
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};

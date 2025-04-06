@@ -1,11 +1,12 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ClrSpinnerModule } from "@clr/angular";
+import { ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-spinner",
   standalone: true,
-  imports: [CommonModule, ClrSpinnerModule],
+  imports: [CommonModule, ClrSpinnerModule, ReactiveFormsModule],
   template: `
     <div class="spinner-container" [class.spinner-inverse-container]="inverse">
       <clr-spinner

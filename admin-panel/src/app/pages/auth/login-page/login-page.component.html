@@ -2,23 +2,16 @@
   <div class="welcome">VMWare</div>
   <div class="hint">Login and start your journey!</div>
 </section>
-<div class="login-group">
-  <!-- <clr-select-container>
-          <label>User Role</label>
-          <select clrSelect name="type" [(ngModel)]="form.type">
-            <option value="local">Local Users</option>
-            <option value="admin">Administrator</option>
-          </select>
-        </clr-select-container> -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-group">
   <clr-input-container>
-    <label class="clr-sr-only">E-mail</label>
+    <label class="clr-sr-only">Email</label>
     <input
       type="text"
       autocomplete="username"
       name="username"
       clrInput
       placeholder="Enter email"
-      [(ngModel)]="form.username"
+      formControlName="email"
     />
   </clr-input-container>
   <clr-password-container>
@@ -29,31 +22,29 @@
       name="password"
       clrPassword
       placeholder="Enter password"
-      [(ngModel)]="form.password"
+      formControlName="password"
     />
   </clr-password-container>
   <clr-checkbox-wrapper>
     <label>Remember me</label>
-    <input
-      type="checkbox"
-      name="rememberMe"
-      clrCheckbox
-      [(ngModel)]="form.rememberMe"
-    />
+    <input type="checkbox" name="rememberMe" clrCheckbox />
   </clr-checkbox-wrapper>
-  <div class="error active" *ngIf="isError">Invalid user name or password</div>
+  <div class="error active" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
 
   <button
-    type="button"
+    type="submit"
     class="btn btn-primary"
-    [routerLink]="'/user/first-page'"
+    [disabled]="form.invalid || (isLoading$ | async)"
   >
     Log in
   </button>
+
   <div class="links">
     <a [routerLink]="'/auth/signup'" class="signup"> Create new account </a>
     <a [routerLink]="'/auth/forget-password'" class="signup">
       Forget Password
     </a>
   </div>
-</div>
+</form>
