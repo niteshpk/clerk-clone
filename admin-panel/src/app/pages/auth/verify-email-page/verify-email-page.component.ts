@@ -82,8 +82,6 @@ export class VerifyEmailPageComponent extends BaseComponent implements OnInit {
         finalize(() => this.setLoadingState(false, ""))
       )
       .subscribe((response: any) => {
-        console.log(response);
-
         if (!response) {
           return;
         }
@@ -146,8 +144,6 @@ export class VerifyEmailPageComponent extends BaseComponent implements OnInit {
         finalize(() => this.setLoadingState(false, ""))
       )
       .subscribe((response: any) => {
-        console.log(response);
-
         if (!response) {
           return;
         }

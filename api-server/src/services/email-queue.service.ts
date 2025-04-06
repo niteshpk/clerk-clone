@@ -28,7 +28,6 @@ class EmailQueue {
         setImmediate(async () => {
           try {
             await sendVerificationEmail(job.email, job.token);
-            console.log(`Verification email sent to ${job.email}`);
           } catch (error) {
             console.error(
               `Failed to send verification email to ${job.email}:`,

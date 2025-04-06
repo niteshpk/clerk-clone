@@ -11,13 +11,8 @@ export class LocalStorageService {
    * @param key - The key to store the value under
    * @param value - The value to store
    */
-  setItem<T>(key: string, value: T): void {
-    try {
-      const serializedValue = JSON.stringify(value);
-      localStorage.setItem(key, serializedValue);
-    } catch (error) {
-      console.error("Error saving to localStorage:", error);
-    }
+  setItem(key: string, value: string): void {
+    localStorage.setItem(key, value);
   }
 
   /**
@@ -25,14 +20,8 @@ export class LocalStorageService {
    * @param key - The key to retrieve
    * @returns The stored value or null if not found
    */
-  getItem<T>(key: string): T | null {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
-    } catch (error) {
-      console.error("Error reading from localStorage:", error);
-      return null;
-    }
+  getItem(key: string): string | null {
+    return localStorage.getItem(key);
   }
 
   /**
@@ -40,22 +29,14 @@ export class LocalStorageService {
    * @param key - The key to remove
    */
   removeItem(key: string): void {
-    try {
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.error("Error removing from localStorage:", error);
-    }
+    localStorage.removeItem(key);
   }
 
   /**
    * Clear all items from localStorage
    */
   clear(): void {
-    try {
-      localStorage.clear();
-    } catch (error) {
-      console.error("Error clearing localStorage:", error);
-    }
+    localStorage.clear();
   }
 
   /**

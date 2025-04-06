@@ -10,13 +10,11 @@ import {
 import { Router, RouterLink } from "@angular/router";
 import { ClrDropdownModule, ClrFormsModule } from "@clr/angular";
 import { AuthService } from "../../../services/auth/auth.service";
-import { LocalStorageService } from "../../../services/storage/local-storage.service";
 import { BaseComponent } from "../../../components/base-component/base-component.component";
-import { finalize, of } from "rxjs";
-import { catchError } from "rxjs";
-import { takeUntil } from "rxjs";
-import { take } from "rxjs";
-import { AppLevelAlertService } from "../../../services/app-level-alert/app-level-alert.service";
+import { finalize, of, takeUntil, catchError, take } from "rxjs";
+import { Store } from "@ngrx/store";
+import { loginSuccess } from "../../../store/auth/auth.actions";
+import { selectIsAuthenticated } from "../../../store/auth/auth.selectors";
 
 @Component({
   selector: "app-login-page",
@@ -44,9 +42,8 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
   constructor(
     private formBuilder: NonNullableFormBuilder,
     private authService: AuthService,
-    private localStorageService: LocalStorageService,
     private router: Router,
-    private appAlertService: AppLevelAlertService
+    private store: Store
   ) {
     super();
 
@@ -58,10 +55,14 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const token = this.localStorageService.getItem("token");
-    if (token) {
-      this.router.navigateByUrl("/user/first-page");
-    }
+    this.store
+      .select(selectIsAuthenticated)
+      .pipe(take(1), takeUntil(this.onDestroy$))
+      .subscribe((isAuthenticated) => {
+        if (isAuthenticated) {
+          this.router.navigateByUrl("/user/first-page");
+        }
+      });
   }
 
   onSubmit() {
@@ -90,8 +91,12 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
           return;
         }
 
-        this.localStorageService.setItem("token", res.data.token);
-        this.localStorageService.setItem("user", res.data.user);
+        this.store.dispatch(
+          loginSuccess({
+            token: res.data.token,
+            user: res.data.user,
+          })
+        );
 
         this.router.navigateByUrl("/user/first-page");
       });

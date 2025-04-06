@@ -10,10 +10,13 @@ import { SecondPageComponent } from "./pages/user-pages/second-page/second-page.
 import { UserPagesComponent } from "./pages/user-pages/user-pages.component";
 import { BlankPageComponent } from "./pages/user-pages/blank-page/blank-page.component";
 import { VerifyEmailPageComponent } from "./pages/auth/verify-email-page/verify-email-page.component";
+import { authGuard } from "./guards/auth.guard";
+import { publicGuard } from "./guards/public.guard";
 
 export const routes: Routes = [
   {
     path: "auth",
+    canActivate: [publicGuard],
     component: AuthPagesComponent,
     children: [
       { path: "", redirectTo: "/auth/login", pathMatch: "full" },
@@ -41,6 +44,7 @@ export const routes: Routes = [
   },
   {
     path: "user",
+    canActivate: [authGuard],
     component: UserPagesComponent,
     children: [
       {

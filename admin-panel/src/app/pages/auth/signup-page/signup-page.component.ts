@@ -88,7 +88,6 @@ export class SignupPageComponent extends BaseComponent {
           return;
         }
 
-        console.log(res);
         this.successMessage = res.message;
       });
   }

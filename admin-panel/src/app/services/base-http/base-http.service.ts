@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable } from "@angular/core";
 import {
   HttpClient,
   HttpHeaders,
   HttpErrorResponse,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { environment } from '../../../environments/environment'; // Ensure you have errorLogging in environment
+} from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError, tap } from "rxjs/operators";
+import { environment } from "../../../environments/environment"; // Ensure you have errorLogging in environment
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class BaseHttpService {
   constructor(
@@ -21,9 +21,9 @@ export class BaseHttpService {
   get<T>(url: string, options?: any): Observable<T> {
     return this.http.get<T>(url, options).pipe(
       tap((response) =>
-        this.logRequest('GET', url, null, options, response, 200)
+        this.logRequest("GET", url, null, options, response, 200)
       ),
-      catchError((error) => this.handleError('GET', url, null, options, error))
+      catchError((error) => this.handleError("GET", url, null, options, error))
     ) as Observable<T>;
   }
 
@@ -31,9 +31,11 @@ export class BaseHttpService {
   post<T>(url: string, body: any, options?: any): Observable<T> {
     return this.http.post<T>(url, body, options).pipe(
       tap((response) =>
-        this.logRequest('POST', url, body, options, response, 200)
+        this.logRequest("POST", url, body, options, response, 200)
       ),
-      catchError((error) => this.handleError('POST', url, body, options, error))
+      catchError((error) =>
+        this.handleError("POST", url, body, options.headers, error)
+      )
     ) as Observable<T>;
   }
 
@@ -41,9 +43,9 @@ export class BaseHttpService {
   put<T>(url: string, body: any, options?: any): Observable<T> {
     return this.http.put<T>(url, body, options).pipe(
       tap((response) =>
-        this.logRequest('PUT', url, body, options, response, 200)
+        this.logRequest("PUT", url, body, options, response, 200)
       ),
-      catchError((error) => this.handleError('PUT', url, body, options, error))
+      catchError((error) => this.handleError("PUT", url, body, options, error))
     ) as Observable<T>;
   }
 
@@ -51,10 +53,10 @@ export class BaseHttpService {
   patch<T>(url: string, body: any, options?: any): Observable<T> {
     return this.http.patch<T>(url, body, options).pipe(
       tap((response) =>
-        this.logRequest('PATCH', url, body, options, response, 200)
+        this.logRequest("PATCH", url, body, options, response, 200)
       ),
       catchError((error) =>
-        this.handleError('PATCH', url, body, options, error)
+        this.handleError("PATCH", url, body, options, error)
       )
     ) as Observable<T>;
   }
@@ -63,10 +65,10 @@ export class BaseHttpService {
   delete<T>(url: string, options?: any): Observable<T> {
     return this.http.delete<T>(url, options).pipe(
       tap((response) =>
-        this.logRequest('DELETE', url, null, options, response, 200)
+        this.logRequest("DELETE", url, null, options, response, 200)
       ),
       catchError((error) =>
-        this.handleError('DELETE', url, null, options, error)
+        this.handleError("DELETE", url, null, options, error)
       )
     ) as Observable<T>;
   }
@@ -76,19 +78,18 @@ export class BaseHttpService {
     method: string,
     url: string,
     body: any,
-    headers: HttpHeaders,
+    options: any,
     response: any,
     statusCode: number
   ) {
     if (environment.apiLogging) {
       // Log details to file or console, as required
-      console.log('---------------');
+      console.log("---------------");
       console.log(
         `Method: ${method}, URL: ${url}, Status: ${statusCode}, Body: ${JSON.stringify(
           body
         )},`
       );
-      console.log(`Headers: ${JSON.stringify(headers)}`);
       console.log(`Response: ${JSON.stringify(response)}`);
       // Here you can implement a file logging system if required
     }

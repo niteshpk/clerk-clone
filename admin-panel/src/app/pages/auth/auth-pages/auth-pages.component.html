@@ -1,5 +1,5 @@
 <div class="login-wrapper">
-  <form class="login" (onSubmit)="onSubmit($event)">
+  <div class="login">
     <div class="login-header">
       <div class="logo"></div>
       <div class="actions">
@@ -10,13 +10,12 @@
             clrDropdownTrigger
             (click)="$event.stopPropagation()"
           >
-            Language
+            English
             <cds-icon shape="angle" direction="down"></cds-icon>
           </button>
           <clr-dropdown-menu>
-            <div aria-label="Language 1" clrDropdownItem>Language 1</div>
-            <div aria-label="Language 2" clrDropdownItem>Language 2</div>
-            <div aria-label="Language 3" clrDropdownItem>Language 3</div>
+            <div aria-label="English" clrDropdownItem>English</div>
+            <div aria-label="Marathi" clrDropdownItem>Marathi</div>
           </clr-dropdown-menu>
         </clr-dropdown>
       </div>
@@ -30,5 +29,5 @@
       <a href="javascript://">Privacy</a>
       <a href="javascript://">California Privacy Rights</a>
     </div>
-  </form>
+  </div>
 </div>
