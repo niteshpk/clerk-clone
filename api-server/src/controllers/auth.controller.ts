@@ -79,6 +79,7 @@ export const register = async (req: Request, res: Response) => {
     emailQueue.addToQueue({
       email: user.email,
       token: verificationToken,
+      type: "verification",
     });
 
     // Get the user document as a plain object
@@ -262,6 +263,7 @@ export const login = async (req: Request, res: Response) => {
         await emailQueue.addToQueue({
           email: user.email,
           token: newToken,
+          type: "verification",
         });
         details =
           "A new verification email has been sent to your email address.";
@@ -481,6 +483,7 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
     emailQueue.addToQueue({
       email: user.email,
       token: verificationToken,
+      type: "verification",
     });
 
     // Get user document

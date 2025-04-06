@@ -1,8 +1,9 @@
-import { sendVerificationEmail } from "./email.service";
+import { sendVerificationEmail, sendPasswordResetEmail } from "./email.service";
 
 type EmailJob = {
   email: string;
   token: string;
+  type: "verification" | "reset";
 };
 
 class EmailQueue {
@@ -27,12 +28,13 @@ class EmailQueue {
         // Use setImmediate to make this truly asynchronous
         setImmediate(async () => {
           try {
-            await sendVerificationEmail(job.email, job.token);
+            if (job.type === "verification") {
+              await sendVerificationEmail(job.email, job.token);
+            } else {
+              await sendPasswordResetEmail(job.email, job.token);
+            }
           } catch (error) {
-            console.error(
-              `Failed to send verification email to ${job.email}:`,
-              error
-            );
+            console.error(`Failed to send email to ${job.email}:`, error);
           }
         });
       }
