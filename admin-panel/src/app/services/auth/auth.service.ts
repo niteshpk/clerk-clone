@@ -14,9 +14,9 @@ export class AuthService extends BaseHttpService {
     return this.post<RegisterResponse>(`${BASE_URL}/api/auth/register`, user);
   }
 
-  verifyEmail(token: string): Observable<ApiResponse<any>> {
+  verifyEmail(token: string, email: string): Observable<ApiResponse<any>> {
     return this.get<ApiResponse<any>>(
-      `${BASE_URL}/api/auth/verify-email?token=${token}`
+      `${BASE_URL}/api/auth/verify-email?token=${token}&email=${email}`
     );
   }
 

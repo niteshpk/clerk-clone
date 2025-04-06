@@ -139,7 +139,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
         res,
         404,
         ApiResponseBuilder.error(
-          "User not found",
+          "User not found with the provided email",
           { code: "USER_NOT_FOUND" },
           req.requestId
         )
@@ -443,7 +443,7 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
         res,
         404,
         ApiResponseBuilder.error(
-          "User not found",
+          "User not found with the provided email",
           { code: "USER_NOT_FOUND" },
           req.requestId
         )

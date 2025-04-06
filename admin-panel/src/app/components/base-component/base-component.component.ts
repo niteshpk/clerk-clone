@@ -11,7 +11,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 export class BaseComponent implements OnDestroy {
   public readonly onDestroy$ = new Subject<void>();
 
-  private isLoading$ = new BehaviorSubject<boolean>(false);
+  public readonly isLoading$ = new BehaviorSubject<boolean>(false);
 
   ngOnDestroy() {
     this.onDestroy$.next();

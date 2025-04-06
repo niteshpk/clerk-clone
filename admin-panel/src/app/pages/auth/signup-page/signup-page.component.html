@@ -21,7 +21,7 @@
       autocomplete="username"
       name="username"
       clrInput
-      placeholder="Enter e-mail"
+      placeholder="Enter email"
       [formControlName]="'email'"
     />
   </clr-input-container>
@@ -36,17 +36,17 @@
       [formControlName]="'password'"
     />
   </clr-password-container>
-  <clr-password-container>
+  <clr-input-container>
     <label class="clr-sr-only">Phone Number</label>
     <input
       type="text"
       autocomplete="phone-number"
       name="phoneNumber"
-      clrPassword
+      clrInput
       placeholder="Enter phone number"
       [formControlName]="'phoneNumber'"
     />
-  </clr-password-container>
+  </clr-input-container>
   <clr-checkbox-wrapper>
     <label>Remember me</label>
     <input

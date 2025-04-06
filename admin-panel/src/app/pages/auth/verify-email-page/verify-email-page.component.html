@@ -3,26 +3,27 @@
   <div class="hint">Email Verification</div>
 </section>
 
-<div class="verification-container">
-  <!-- Loading State -->
-  <div *ngIf="isVerifying" class="loading-state">
-    <div class="spinner"></div>
-    <p>Verifying your email...</p>
-  </div>
+<div class="login-group">
+  <app-spinner
+    *ngIf="isLoading$ | async"
+    [medium]="true"
+    [text]="'Verifying your email..'"
+  ></app-spinner>
 
-  <!-- Success State -->
-  <div *ngIf="isSuccess && !isVerifying" class="success-state">
+  <ng-container *ngIf="isSuccess">
     <clr-icon shape="check-circle" class="is-success" size="48"></clr-icon>
     <p class="success-message">{{ successMessage }}</p>
     <a [routerLink]="'/auth/login'" class="btn btn-primary">Go to Login</a>
-  </div>
+  </ng-container>
 
-  <!-- Error State -->
-  <div *ngIf="isError && !isVerifying" class="error-state">
-    <clr-icon shape="exclamation-circle" class="is-error" size="48"></clr-icon>
-    <p class="error-message">{{ errorMessage }}</p>
-    <button class="btn btn-primary" (click)="resendVerificationEmail()">
+  <ng-container *ngIf="isError">
+    <div class="error active" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="resendVerificationEmail()"
+    >
       Resend Verification Email
     </button>
-  </div>
+  </ng-container>
 </div>
