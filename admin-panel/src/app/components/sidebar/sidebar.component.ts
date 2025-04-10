@@ -28,8 +28,8 @@ export class SidebarComponent {
       icon: "user",
     },
     {
-      path: "/user/orgs-page",
-      label: "Orgs Page",
+      path: "/user/projects-page",
+      label: "Projects Page",
       icon: "bolt",
     },
     {

@@ -11,7 +11,7 @@ import { BlankPageComponent } from "./pages/user-pages/blank-page/blank-page.com
 import { VerifyEmailPageComponent } from "./pages/auth/verify-email-page/verify-email-page.component";
 import { authGuard } from "./guards/auth.guard";
 import { publicGuard } from "./guards/public.guard";
-import { OrgsPageComponent } from "./pages/user-pages/orgs-page/orgs-page.component";
+import { ProjectsPageComponent } from "./pages/user-pages/projects-page/projects-page.component";
 import { RolesPageComponent } from "./pages/user-pages/roles-page/roles-page.component";
 
 export const routes: Routes = [
@@ -53,8 +53,8 @@ export const routes: Routes = [
         component: FirstPageComponent,
       },
       {
-        path: "orgs-page",
-        component: OrgsPageComponent,
+        path: "projects-page",
+        component: ProjectsPageComponent,
       },
       {
         path: "roles-page",

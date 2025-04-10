@@ -17,8 +17,8 @@ import {
   Validators,
 } from "@angular/forms";
 import { DialogService } from "@services/dialog/dialog.service";
-import { Org } from "@models/org.model";
-import { OrgService } from "@services/org/org.service";
+import { Project } from "@app/models/project.model";
+import { ProjectService } from "@app/services/project/project.service";
 import { SelectOption } from "@app/models/common.model";
 import { map } from "rxjs";
 
@@ -43,7 +43,7 @@ export class RolesPageComponent {
   selectedRole?: Role;
   modalOpen = false;
   isEditMode = false;
-  orgs: SelectOption[] = [];
+  projects: SelectOption[] = [];
 
   form = new FormGroup({
     role: new FormControl("", [Validators.required]),
@@ -53,7 +53,7 @@ export class RolesPageComponent {
   constructor(
     private roleService: RoleService,
     private dialogService: DialogService,
-    private orgService: OrgService
+    private projectService: ProjectService
   ) {}
 
   ngOnInit() {
@@ -68,18 +68,18 @@ export class RolesPageComponent {
   }
 
   loadOrganizations() {
-    this.orgService
-      .getOrgs()
+    this.projectService
+      .getProjects()
       .pipe(
-        map((orgs: Org[]) =>
-          orgs.map((org: Org) => ({
-            label: org.name,
-            value: org.id.toString(),
+        map((projects: Project[]) =>
+          projects.map((project: Project) => ({
+            label: project.name,
+            value: project.id.toString(),
           }))
         )
       )
-      .subscribe((orgs: SelectOption[]) => {
-        this.orgs = orgs;
+      .subscribe((projects: SelectOption[]) => {
+        this.projects = projects;
       });
   }
 

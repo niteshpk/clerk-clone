@@ -7,8 +7,8 @@ import {
   ClrFormsModule,
 } from "@clr/angular";
 import { ButtonComponent } from "@components/button/button.component";
-import { OrgService } from "@services/org/org.service";
-import { Org } from "@models/org.model";
+import { ProjectService } from "@app/services/project/project.service";
+import { Project } from "@app/models/project.model";
 import { DatePipe } from "@angular/common";
 import {
   FormControl,
@@ -19,7 +19,7 @@ import {
 import { DialogService } from "@services/dialog/dialog.service";
 
 @Component({
-  selector: "app-orgs-page",
+  selector: "app-projects-page",
   standalone: true,
   imports: [
     CommonModule,
@@ -31,12 +31,12 @@ import { DialogService } from "@services/dialog/dialog.service";
     ButtonComponent,
     DatePipe,
   ],
-  templateUrl: "./orgs-page.component.html",
-  styleUrls: ["./orgs-page.component.scss"],
+  templateUrl: "./projects-page.component.html",
+  styleUrls: ["./projects-page.component.scss"],
 })
-export class OrgsPageComponent {
-  orgs: Org[] = [];
-  selectedOrg?: Org;
+export class ProjectsPageComponent {
+  projects: Project[] = [];
+  selectedProject?: Project;
   modalOpen = false;
   isEditMode = false;
 
@@ -45,54 +45,54 @@ export class OrgsPageComponent {
   });
 
   constructor(
-    private orgService: OrgService,
+    private orgService: ProjectService,
     private dialogService: DialogService
   ) {}
 
   ngOnInit() {
-    this.loadOrgs();
+    this.loadProjects();
   }
 
-  loadOrgs() {
-    this.orgService.getOrgs().subscribe((orgs) => {
-      this.orgs = orgs;
+  loadProjects() {
+    this.orgService.getProjects().subscribe((projects) => {
+      this.projects = projects;
     });
   }
 
-  onAddOrg() {
+  onAddProject() {
     this.isEditMode = false;
-    this.selectedOrg = undefined;
+    this.selectedProject = undefined;
     this.form.reset();
     this.modalOpen = true;
   }
 
-  onEditOrg(org: Org, $event: Event) {
+  onEditProject(org: Project, $event: Event) {
     $event.stopPropagation();
     $event.preventDefault();
 
     this.isEditMode = true;
-    this.selectedOrg = org;
+    this.selectedProject = org;
     this.form.patchValue({
       name: org.name,
     });
     this.modalOpen = true;
   }
 
-  onDeleteOrg(org: Org, $event: Event) {
+  onDeleteProject(org: Project, $event: Event) {
     $event.stopPropagation();
     $event.preventDefault();
 
     this.dialogService
       .warning({
-        title: "Delete Organization",
+        title: "Delete Project",
         content: `Are you sure you want to delete ${org.name}?`,
         acceptText: "Delete",
         acceptType: "danger",
       })
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.orgService.deleteOrg(org.id).subscribe(() => {
-            this.loadOrgs();
+          this.orgService.deleteProject(org.id).subscribe(() => {
+            this.loadProjects();
           });
         }
       });
@@ -100,20 +100,20 @@ export class OrgsPageComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      const formData = this.form.value as Partial<Org>;
+      const formData = this.form.value as Partial<Project>;
 
-      if (this.isEditMode && this.selectedOrg) {
+      if (this.isEditMode && this.selectedProject) {
         this.orgService
-          .updateOrg(this.selectedOrg.id, formData)
+          .updateProject(this.selectedProject.id, formData)
           .subscribe(() => {
-            this.loadOrgs();
+            this.loadProjects();
             this.modalOpen = false;
           });
         return;
       }
 
-      this.orgService.createOrg(formData).subscribe(() => {
-        this.loadOrgs();
+      this.orgService.createProject(formData).subscribe(() => {
+        this.loadProjects();
         this.modalOpen = false;
       });
     }

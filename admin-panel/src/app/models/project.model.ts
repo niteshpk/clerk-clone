@@ -1,4 +1,4 @@
-export interface Org {
+export interface Project {
   id: number;
   name: string;
   slug: string;
@@ -6,8 +6,8 @@ export interface Org {
   updated_at: string;
 }
 
-export interface OrgResponse {
+export interface ProjectResponse {
   data: {
-    orgs: Org[];
+    projects: Project[];
   };
 }

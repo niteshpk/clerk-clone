@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { OrgsPageComponent } from "./orgs-page.component";
+import { ProjectsPageComponent } from "./projects-page.component";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { OrgService } from "@services/org/org.service";
+import { ProjectService } from "@services/project/project.service";
 
-describe("OrgsPageComponent", () => {
-  let component: OrgsPageComponent;
-  let fixture: ComponentFixture<OrgsPageComponent>;
+describe("ProjectsPageComponent", () => {
+  let component: ProjectsPageComponent;
+  let fixture: ComponentFixture<ProjectsPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [OrgService],
+      providers: [ProjectService],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(OrgsPageComponent);
+    fixture = TestBed.createComponent(ProjectsPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

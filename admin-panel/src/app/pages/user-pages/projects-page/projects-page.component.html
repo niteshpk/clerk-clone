@@ -1,8 +1,8 @@
 <div class="header-area">
-  <h3 class="headline">Organizations Page</h3>
+  <h3 class="headline">Projects Page</h3>
 
-  <app-button [btnType]="'btn-primary'" (onClick)="onAddOrg()">
-    Add Organization
+  <app-button [btnType]="'btn-primary'" (onClick)="onAddProject()">
+    Add Project
   </app-button>
 </div>
 
@@ -12,32 +12,38 @@
   <clr-dg-column>Created At</clr-dg-column>
   <clr-dg-column>Updated At</clr-dg-column>
   <clr-dg-column>Actions</clr-dg-column>
-  <clr-dg-placeholder>We couldn't find any orgs!</clr-dg-placeholder>
+  <clr-dg-placeholder>We couldn't find any projects!</clr-dg-placeholder>
 
-  <clr-dg-row *clrDgItems="let org of orgs">
-    <clr-dg-cell>{{ org.name }}</clr-dg-cell>
-    <clr-dg-cell>{{ org.slug }}</clr-dg-cell>
-    <clr-dg-cell>{{ org.created_at | date : "medium" }}</clr-dg-cell>
-    <clr-dg-cell>{{ org.updated_at | date : "medium" }}</clr-dg-cell>
+  <clr-dg-row *clrDgItems="let project of projects">
+    <clr-dg-cell>{{ project.name }}</clr-dg-cell>
+    <clr-dg-cell>{{ project.slug }}</clr-dg-cell>
+    <clr-dg-cell>{{ project.created_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ project.updated_at | date : "medium" }}</clr-dg-cell>
     <clr-dg-cell>
-      <cds-icon shape="pencil" (click)="onEditOrg(org, $event)"></cds-icon>
-      <cds-icon shape="trash" (click)="onDeleteOrg(org, $event)"></cds-icon>
+      <cds-icon
+        shape="pencil"
+        (click)="onEditProject(project, $event)"
+      ></cds-icon>
+      <cds-icon
+        shape="trash"
+        (click)="onDeleteProject(project, $event)"
+      ></cds-icon>
     </clr-dg-cell>
   </clr-dg-row>
 
   <clr-dg-footer>
     <clr-dg-pagination #pagination [clrDgPageSize]="15">
       <clr-dg-page-size [clrPageSizeOptions]="[15, 30, 50, 100]">
-        Orgs per page
+        Projects per page
       </clr-dg-page-size>
       {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
-      {{ pagination.totalItems }} orgs
+      {{ pagination.totalItems }} projects
     </clr-dg-pagination>
   </clr-dg-footer>
 </clr-datagrid>
 
 <clr-modal [(clrModalOpen)]="modalOpen">
-  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Organization</h3>
+  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Project</h3>
 
   <div class="modal-body">
     <form
@@ -54,7 +60,7 @@
           autocomplete="name"
           name="name"
           clrInput
-          placeholder="Enter organization name"
+          placeholder="Enter project name"
           formControlName="name"
           class="w-100"
         />
@@ -71,7 +77,7 @@
       [disabled]="form.invalid"
       (click)="onSubmit()"
     >
-      {{ isEditMode ? "Update" : "Create" }} Organization
+      {{ isEditMode ? "Update" : "Create" }} Project
     </button>
   </div>
 </clr-modal>

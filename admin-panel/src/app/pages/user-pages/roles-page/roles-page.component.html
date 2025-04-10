@@ -66,8 +66,8 @@
           formControlName="organization_id"
           class="w-100"
         >
-          <option *ngFor="let org of orgs" [value]="org.value">
-            {{ org.label }}
+          <option *ngFor="let project of projects" [value]="project.value">
+            {{ project.label }}
           </option>
         </select>
       </clr-select-container>

@@ -1,21 +1,21 @@
 import { TestBed } from "@angular/core/testing";
 
-import { OrgService } from "./org.service";
+import { ProjectService } from "./project.service";
 import {
   HttpTestingController,
   HttpClientTestingModule,
 } from "@angular/common/http/testing";
 
-describe("OrgService", () => {
-  let service: OrgService;
+describe("ProjectService", () => {
+  let service: ProjectService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [OrgService],
+      providers: [ProjectService],
     });
-    service = TestBed.inject(OrgService);
+    service = TestBed.inject(ProjectService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
