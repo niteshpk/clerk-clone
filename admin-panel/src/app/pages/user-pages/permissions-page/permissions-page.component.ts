@@ -7,7 +7,6 @@ import {
   ClrFormsModule,
 } from "@clr/angular";
 import { ButtonComponent } from "@components/button/button.component";
-import { RoleService } from "@services/role/role.service";
 import { Role } from "@models/role.model";
 import { DatePipe } from "@angular/common";
 import {
@@ -21,9 +20,11 @@ import { Project } from "@app/models/project.model";
 import { ProjectService } from "@app/services/project/project.service";
 import { SelectOption } from "@app/models/common.model";
 import { map } from "rxjs";
+import { PermissionService } from "@app/services/permission/permission.service";
+import { Permission } from "@app/models/permission.model";
 
 @Component({
-  selector: "app-roles-page",
+  selector: "app-permissions-page",
   standalone: true,
   imports: [
     CommonModule,
@@ -35,35 +36,35 @@ import { map } from "rxjs";
     ButtonComponent,
     DatePipe,
   ],
-  templateUrl: "./roles-page.component.html",
-  styleUrls: ["./roles-page.component.scss"],
+  templateUrl: "./permissions-page.component.html",
+  styleUrls: ["./permissions-page.component.scss"],
 })
-export class RolesPageComponent {
-  roles: Role[] = [];
-  selectedRole?: Role;
+export class PermissionsPageComponent {
+  permissions: Permission[] = [];
+  selectedPermission?: Permission;
   modalOpen = false;
   isEditMode = false;
   projects: SelectOption[] = [];
 
   form = new FormGroup({
-    role: new FormControl("", [Validators.required]),
+    permission: new FormControl("", [Validators.required]),
     project_id: new FormControl("", [Validators.required]),
   });
 
   constructor(
-    private roleService: RoleService,
+    private permissionService: PermissionService,
     private dialogService: DialogService,
     private projectService: ProjectService
   ) {}
 
   ngOnInit() {
-    this.loadRoles();
+    this.loadPermissions();
     this.loadProjects();
   }
 
-  loadRoles() {
-    this.roleService.getRoles().subscribe((roles) => {
-      this.roles = roles;
+  loadPermissions() {
+    this.permissionService.getPermissions().subscribe((permissions) => {
+      this.permissions = permissions;
     });
   }
 
@@ -83,42 +84,44 @@ export class RolesPageComponent {
       });
   }
 
-  onAddRole() {
+  onAddPermission() {
     this.isEditMode = false;
-    this.selectedRole = undefined;
+    this.selectedPermission = undefined;
     this.form.reset();
     this.modalOpen = true;
   }
 
-  onEditRole(role: Role, $event: Event) {
+  onEditPermission(permission: Permission, $event: Event) {
     $event.stopPropagation();
     $event.preventDefault();
 
     this.isEditMode = true;
-    this.selectedRole = role;
+    this.selectedPermission = permission;
     this.form.patchValue({
-      role: role.role,
-      project_id: role.project_id,
+      permission: permission.permission,
+      project_id: permission.project_id,
     });
     this.modalOpen = true;
   }
 
-  onDeleteRole(role: Role, $event: Event) {
+  onDeletePermission(permission: Permission, $event: Event) {
     $event.stopPropagation();
     $event.preventDefault();
 
     this.dialogService
       .warning({
-        title: "Delete Role",
-        content: `Are you sure you want to delete ${role.role}?`,
+        title: "Delete Permission",
+        content: `Are you sure you want to delete ${permission.permission}?`,
         acceptText: "Delete",
         acceptType: "danger",
       })
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.roleService.deleteRole(role.id).subscribe(() => {
-            this.loadRoles();
-          });
+          this.permissionService
+            .deletePermission(permission.id)
+            .subscribe(() => {
+              this.loadPermissions();
+            });
         }
       });
   }
@@ -127,18 +130,18 @@ export class RolesPageComponent {
     if (this.form.valid) {
       const formData = this.form.value as Partial<Role>;
 
-      if (this.isEditMode && this.selectedRole) {
-        this.roleService
-          .updateRole(this.selectedRole.id, formData)
+      if (this.isEditMode && this.selectedPermission) {
+        this.permissionService
+          .updatePermission(this.selectedPermission.id, formData)
           .subscribe(() => {
-            this.loadRoles();
+            this.loadPermissions();
             this.modalOpen = false;
           });
         return;
       }
 
-      this.roleService.createRole(formData).subscribe(() => {
-        this.loadRoles();
+      this.permissionService.createPermission(formData).subscribe(() => {
+        this.loadPermissions();
         this.modalOpen = false;
       });
     }

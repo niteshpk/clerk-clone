@@ -1,5 +1,7 @@
 import { Router } from "express";
 import {
+  getProjectPermissions,
+  getProjectPermission,
   createProjectPermission,
   updateProjectPermission,
   deleteProjectPermission,
@@ -19,5 +21,9 @@ router.put("/:id", updateProjectPermission);
 
 // Delete project permission
 router.delete("/:id", deleteProjectPermission);
+
+router.get("/", getProjectPermissions);
+
+router.get("/:id", getProjectPermission);
 
 export default router;

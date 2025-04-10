@@ -13,6 +13,7 @@ import { authGuard } from "./guards/auth.guard";
 import { publicGuard } from "./guards/public.guard";
 import { ProjectsPageComponent } from "./pages/user-pages/projects-page/projects-page.component";
 import { RolesPageComponent } from "./pages/user-pages/roles-page/roles-page.component";
+import { PermissionsPageComponent } from "./pages/user-pages/permissions-page/permissions-page.component";
 
 export const routes: Routes = [
   {
@@ -59,6 +60,10 @@ export const routes: Routes = [
       {
         path: "roles-page",
         component: RolesPageComponent,
+      },
+      {
+        path: "permissions-page",
+        component: PermissionsPageComponent,
       },
       {
         path: "blank-page",

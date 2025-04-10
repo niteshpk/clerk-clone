@@ -1,0 +1,19 @@
+.header-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+cds-icon {
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+.clr-select-wrapper select,
+.clr-multiselect-wrapper select {
+  width: 100% !important;
+}

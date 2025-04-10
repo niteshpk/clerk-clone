@@ -1,0 +1,95 @@
+<div class="header-area">
+  <h3 class="headline">Permissions Page</h3>
+
+  <app-button [btnType]="'btn-primary'" (onClick)="onAddPermission()">
+    Add Permission
+  </app-button>
+</div>
+
+<clr-datagrid>
+  <clr-dg-column>Permission</clr-dg-column>
+  <clr-dg-column>Created At</clr-dg-column>
+  <clr-dg-column>Updated At</clr-dg-column>
+  <clr-dg-column>Actions</clr-dg-column>
+  <clr-dg-placeholder>We couldn't find any permissions!</clr-dg-placeholder>
+
+  <clr-dg-row *clrDgItems="let permission of permissions">
+    <clr-dg-cell>{{ permission.permission }}</clr-dg-cell>
+    <clr-dg-cell>{{ permission.createdAt | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ permission.updatedAt | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>
+      <cds-icon
+        shape="pencil"
+        (click)="onEditPermission(permission, $event)"
+      ></cds-icon>
+      <cds-icon
+        shape="trash"
+        (click)="onDeletePermission(permission, $event)"
+      ></cds-icon>
+    </clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="15">
+      <clr-dg-page-size [clrPageSizeOptions]="[15, 30, 50, 100]">
+        Permissions per page
+      </clr-dg-page-size>
+      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
+      {{ pagination.totalItems }} permissions
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+
+<clr-modal [(clrModalOpen)]="modalOpen">
+  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Permission</h3>
+
+  <div class="modal-body">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      clrForm
+      clrLayout="horizontal"
+      clrLabelSize="2"
+    >
+      <clr-input-container>
+        <label for="permission">Permission</label>
+        <input
+          type="text"
+          autocomplete="permission"
+          name="permission"
+          clrInput
+          placeholder="Enter permission name"
+          formControlName="permission"
+          class="w-100"
+        />
+      </clr-input-container>
+
+      <clr-select-container class="w-100">
+        <label>Project</label>
+        <select
+          clrSelect
+          name="project_id"
+          formControlName="project_id"
+          class="w-100"
+        >
+          <option *ngFor="let project of projects" [value]="project.value">
+            {{ project.label }}
+          </option>
+        </select>
+      </clr-select-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="onCancel()">
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid"
+      (click)="onSubmit()"
+    >
+      {{ isEditMode ? "Update" : "Create" }} Permission
+    </button>
+  </div>
+</clr-modal>

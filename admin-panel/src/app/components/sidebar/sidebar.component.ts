@@ -38,6 +38,11 @@ export class SidebarComponent {
       icon: "bolt",
     },
     {
+      path: "/user/permissions-page",
+      label: "Permissions Page",
+      icon: "bolt",
+    },
+    {
       path: "/user/blank-page",
       label: "Blank Page",
       icon: "bolt",
