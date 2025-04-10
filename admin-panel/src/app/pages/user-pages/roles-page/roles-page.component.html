@@ -1,0 +1,89 @@
+<div class="header-area">
+  <h3 class="headline">Roles Page</h3>
+
+  <app-button [btnType]="'btn-primary'" (onClick)="onAddRole()">
+    Add Role
+  </app-button>
+</div>
+
+<clr-datagrid>
+  <clr-dg-column>Role</clr-dg-column>
+  <clr-dg-column>Created At</clr-dg-column>
+  <clr-dg-column>Updated At</clr-dg-column>
+  <clr-dg-column>Actions</clr-dg-column>
+  <clr-dg-placeholder>We couldn't find any roles!</clr-dg-placeholder>
+
+  <clr-dg-row *clrDgItems="let role of roles">
+    <clr-dg-cell>{{ role.role }}</clr-dg-cell>
+    <clr-dg-cell>{{ role.created_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ role.updated_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>
+      <cds-icon shape="pencil" (click)="onEditRole(role, $event)"></cds-icon>
+      <cds-icon shape="trash" (click)="onDeleteRole(role, $event)"></cds-icon>
+    </clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="15">
+      <clr-dg-page-size [clrPageSizeOptions]="[15, 30, 50, 100]">
+        Roles per page
+      </clr-dg-page-size>
+      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
+      {{ pagination.totalItems }} roles
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+
+<clr-modal [(clrModalOpen)]="modalOpen">
+  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Role</h3>
+
+  <div class="modal-body">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      clrForm
+      clrLayout="horizontal"
+      clrLabelSize="2"
+    >
+      <clr-input-container>
+        <label for="role">Role</label>
+        <input
+          type="text"
+          autocomplete="role"
+          name="role"
+          clrInput
+          placeholder="Enter role name"
+          formControlName="role"
+          class="w-100"
+        />
+      </clr-input-container>
+
+      <clr-select-container class="w-100">
+        <label>Org</label>
+        <select
+          clrSelect
+          name="organization_id"
+          formControlName="organization_id"
+          class="w-100"
+        >
+          <option *ngFor="let org of orgs" [value]="org.value">
+            {{ org.label }}
+          </option>
+        </select>
+      </clr-select-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="onCancel()">
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid"
+      (click)="onSubmit()"
+    >
+      {{ isEditMode ? "Update" : "Create" }} Role
+    </button>
+  </div>
+</clr-modal>

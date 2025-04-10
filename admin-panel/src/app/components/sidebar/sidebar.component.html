@@ -1,0 +1,21 @@
+<div class="content-container">
+  <clr-vertical-nav
+    [clrVerticalNavCollapsible]="true"
+    [clrVerticalNavCollapsed]="false"
+  >
+    <a
+      *ngFor="let item of navigationItems"
+      clrVerticalNavLink
+      [routerLink]="item.path"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+    >
+      <clr-icon clrVerticalNavIcon [attr.shape]="item.icon"></clr-icon>
+      {{ item.label }}
+    </a>
+  </clr-vertical-nav>
+
+  <div class="content-area">
+    <router-outlet></router-outlet>
+  </div>
+</div>

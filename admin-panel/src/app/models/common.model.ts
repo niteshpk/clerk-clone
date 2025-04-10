@@ -21,3 +21,14 @@ export interface ApiResponseError<T> extends APIResponse<T> {
 }
 
 export type ApiResponse<T> = ApiResponseSuccess<T> | ApiResponseError<T>;
+
+export type SelectOption = {
+  label: string;
+  value: string;
+};
+
+export interface NavItem {
+  path: string;
+  label: string;
+  icon: string;
+}

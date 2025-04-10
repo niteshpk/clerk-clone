@@ -7,6 +7,7 @@ import {
 import { Observable, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { environment } from "../../../environments/environment"; // Ensure you have errorLogging in environment
+import { AppLevelAlertService } from "@services/app-level-alert/app-level-alert.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,7 +15,8 @@ import { environment } from "../../../environments/environment"; // Ensure you h
 export class BaseHttpService {
   constructor(
     @Inject(HttpClient)
-    private http: HttpClient
+    private http: HttpClient,
+    private alertService: AppLevelAlertService
   ) {}
 
   // GET Request
@@ -30,9 +32,18 @@ export class BaseHttpService {
   // POST Request
   post<T>(url: string, body: any, options?: any): Observable<T> {
     return this.http.post<T>(url, body, options).pipe(
-      tap((response) =>
-        this.logRequest("POST", url, body, options, response, 200)
-      ),
+      tap((response: any) => {
+        this.logRequest("POST", url, body, options, response, 200);
+
+        if (response.message) {
+          console.log(response.message);
+          this.alertService.show({
+            message: response.message,
+            type: "success",
+            alertType: "success",
+          });
+        }
+      }),
       catchError((error) => this.handleError("POST", url, body, options, error))
     ) as Observable<T>;
   }
@@ -40,9 +51,18 @@ export class BaseHttpService {
   // PUT Request
   put<T>(url: string, body: any, options?: any): Observable<T> {
     return this.http.put<T>(url, body, options).pipe(
-      tap((response) =>
-        this.logRequest("PUT", url, body, options, response, 200)
-      ),
+      tap((response: any) => {
+        this.logRequest("PUT", url, body, options, response, 200);
+
+        if (response.message) {
+          console.log(response.message);
+          this.alertService.show({
+            message: response.message,
+            type: "success",
+            alertType: "success",
+          });
+        }
+      }),
       catchError((error) => this.handleError("PUT", url, body, options, error))
     ) as Observable<T>;
   }
@@ -50,9 +70,18 @@ export class BaseHttpService {
   // PATCH Request
   patch<T>(url: string, body: any, options?: any): Observable<T> {
     return this.http.patch<T>(url, body, options).pipe(
-      tap((response) =>
-        this.logRequest("PATCH", url, body, options, response, 200)
-      ),
+      tap((response: any) => {
+        this.logRequest("PATCH", url, body, options, response, 200);
+
+        if (response.message) {
+          console.log(response.message);
+          this.alertService.show({
+            message: response.message,
+            type: "success",
+            alertType: "success",
+          });
+        }
+      }),
       catchError((error) =>
         this.handleError("PATCH", url, body, options, error)
       )
@@ -62,9 +91,18 @@ export class BaseHttpService {
   // DELETE Request
   delete<T>(url: string, options?: any): Observable<T> {
     return this.http.delete<T>(url, options).pipe(
-      tap((response) =>
-        this.logRequest("DELETE", url, null, options, response, 200)
-      ),
+      tap((response: any) => {
+        this.logRequest("DELETE", url, null, options, response, 200);
+
+        if (response.message) {
+          console.log(response.message);
+          this.alertService.show({
+            message: response.message,
+            type: "success",
+            alertType: "success",
+          });
+        }
+      }),
       catchError((error) =>
         this.handleError("DELETE", url, null, options, error)
       )

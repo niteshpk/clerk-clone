@@ -1,0 +1,77 @@
+<div class="header-area">
+  <h3 class="headline">Organizations Page</h3>
+
+  <app-button [btnType]="'btn-primary'" (onClick)="onAddOrg()">
+    Add Organization
+  </app-button>
+</div>
+
+<clr-datagrid>
+  <clr-dg-column>Name</clr-dg-column>
+  <clr-dg-column>Slug</clr-dg-column>
+  <clr-dg-column>Created At</clr-dg-column>
+  <clr-dg-column>Updated At</clr-dg-column>
+  <clr-dg-column>Actions</clr-dg-column>
+  <clr-dg-placeholder>We couldn't find any orgs!</clr-dg-placeholder>
+
+  <clr-dg-row *clrDgItems="let org of orgs">
+    <clr-dg-cell>{{ org.name }}</clr-dg-cell>
+    <clr-dg-cell>{{ org.slug }}</clr-dg-cell>
+    <clr-dg-cell>{{ org.created_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ org.updated_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>
+      <cds-icon shape="pencil" (click)="onEditOrg(org, $event)"></cds-icon>
+      <cds-icon shape="trash" (click)="onDeleteOrg(org, $event)"></cds-icon>
+    </clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="15">
+      <clr-dg-page-size [clrPageSizeOptions]="[15, 30, 50, 100]">
+        Orgs per page
+      </clr-dg-page-size>
+      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
+      {{ pagination.totalItems }} orgs
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+
+<clr-modal [(clrModalOpen)]="modalOpen">
+  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Organization</h3>
+
+  <div class="modal-body">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      clrForm
+      clrLayout="horizontal"
+      clrLabelSize="2"
+    >
+      <clr-input-container>
+        <label for="name">Name</label>
+        <input
+          type="text"
+          autocomplete="name"
+          name="name"
+          clrInput
+          placeholder="Enter organization name"
+          formControlName="name"
+          class="w-100"
+        />
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="onCancel()">
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid"
+      (click)="onSubmit()"
+    >
+      {{ isEditMode ? "Update" : "Create" }} Organization
+    </button>
+  </div>
+</clr-modal>

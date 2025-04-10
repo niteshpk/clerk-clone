@@ -6,12 +6,13 @@ import { LoginPageComponent } from "./pages/auth/login-page/login-page.component
 import { ResetPasswordPageComponent } from "./pages/auth/reset-password-page/reset-password-page.component";
 import { SignupPageComponent } from "./pages/auth/signup-page/signup-page.component";
 import { FirstPageComponent } from "./pages/user-pages/first-page/first-page.component";
-import { SecondPageComponent } from "./pages/user-pages/second-page/second-page.component";
 import { UserPagesComponent } from "./pages/user-pages/user-pages.component";
 import { BlankPageComponent } from "./pages/user-pages/blank-page/blank-page.component";
 import { VerifyEmailPageComponent } from "./pages/auth/verify-email-page/verify-email-page.component";
 import { authGuard } from "./guards/auth.guard";
 import { publicGuard } from "./guards/public.guard";
+import { OrgsPageComponent } from "./pages/user-pages/orgs-page/orgs-page.component";
+import { RolesPageComponent } from "./pages/user-pages/roles-page/roles-page.component";
 
 export const routes: Routes = [
   {
@@ -52,8 +53,12 @@ export const routes: Routes = [
         component: FirstPageComponent,
       },
       {
-        path: "second-page",
-        component: SecondPageComponent,
+        path: "orgs-page",
+        component: OrgsPageComponent,
+      },
+      {
+        path: "roles-page",
+        component: RolesPageComponent,
       },
       {
         path: "blank-page",

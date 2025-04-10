@@ -1,5 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
 import "@cds/core/icon/register.js";
 import { CommonModule } from "@angular/common";
 import { Store } from "@ngrx/store";
@@ -19,10 +19,19 @@ ClarityIcons.addIcons(checkCircleIcon);
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
-export class AppComponent implements OnInit {
-  constructor(private store: Store, private themeService: ThemeService) {}
+export class AppComponent implements OnInit, AfterViewInit {
+  constructor(private store: Store, private router: Router) {}
 
   ngOnInit() {
     this.store.dispatch(initAuth());
+  }
+
+  ngAfterViewInit() {
+    // scroll to top once page router navigation end
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        window.scrollTo(0, 0);
+      }
+    });
   }
 }
