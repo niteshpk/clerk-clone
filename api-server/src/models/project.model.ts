@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
-import { ApiResponseBuilder } from "../types/api-response";
 
 export interface IProject extends Document {
   name: string;

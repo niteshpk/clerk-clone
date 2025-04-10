@@ -1,9 +1,9 @@
 export interface Role {
   id: number;
   role: string;
-  organization_id: string;
-  created_at: string;
-  updated_at: string;
+  project_id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RoleResponse {

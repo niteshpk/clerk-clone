@@ -47,7 +47,7 @@ export class RolesPageComponent {
 
   form = new FormGroup({
     role: new FormControl("", [Validators.required]),
-    organization_id: new FormControl("", [Validators.required]),
+    project_id: new FormControl("", [Validators.required]),
   });
 
   constructor(
@@ -98,7 +98,7 @@ export class RolesPageComponent {
     this.selectedRole = role;
     this.form.patchValue({
       role: role.role,
-      organization_id: role.organization_id,
+      project_id: role.project_id,
     });
     this.modalOpen = true;
   }

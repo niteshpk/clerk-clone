@@ -1,28 +1,29 @@
 import { Request, Response } from "express";
 import { ProjectRole } from "../models/project-role.model";
 import { ApiResponseBuilder } from "../types/api-response";
+import { transformDocument } from "../utils/transform";
 
 export const createProjectRole = async (req: Request, res: Response) => {
   try {
-    const { name, description, project, permissions } = req.body;
+    const { role, project_id } = req.body;
     const userId = res.locals.userId;
 
     const projectRole = new ProjectRole({
-      name,
-      description,
-      project,
-      permissions,
+      role,
+      project_id,
       created_by: userId,
     });
 
     await projectRole.save();
+
+    const transformedProjectRole = transformDocument(projectRole.toObject());
 
     return ApiResponseBuilder.send(
       res,
       201,
       ApiResponseBuilder.created(
         "Project role created successfully",
-        { role: projectRole },
+        { role: transformedProjectRole },
         req.requestId
       )
     );
@@ -45,6 +46,8 @@ export const getProjectRole = async (req: Request, res: Response) => {
     const { id } = req.params;
     const projectRole = await ProjectRole.findById(id);
 
+    const transformedProjectRole = transformDocument(projectRole?.toObject());
+
     if (!projectRole) {
       return ApiResponseBuilder.send(
         res,
@@ -65,7 +68,7 @@ export const getProjectRole = async (req: Request, res: Response) => {
       200,
       ApiResponseBuilder.success(
         "Project role retrieved successfully",
-        { role: projectRole },
+        { role: transformedProjectRole },
         undefined,
         req.requestId
       )
@@ -87,13 +90,15 @@ export const getProjectRole = async (req: Request, res: Response) => {
 export const updateProjectRole = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, permissions } = req.body;
+    const { role, project_id } = req.body;
 
     const projectRole = await ProjectRole.findByIdAndUpdate(
       id,
-      { name, description, permissions },
+      { role, project_id },
       { new: true, runValidators: true }
     );
+
+    const transformedProjectRole = transformDocument(projectRole?.toObject());
 
     if (!projectRole) {
       return ApiResponseBuilder.send(
@@ -115,7 +120,7 @@ export const updateProjectRole = async (req: Request, res: Response) => {
       200,
       ApiResponseBuilder.success(
         "Project role updated successfully",
-        { role: projectRole },
+        { role: transformedProjectRole },
         undefined,
         req.requestId
       )
@@ -184,13 +189,13 @@ export const getProjectRoles = async (req: Request, res: Response) => {
     const query = project ? { project } : {};
 
     const projectRoles = await ProjectRole.find(query).lean();
-
+    const transformedProjectRoles = transformDocument(projectRoles);
     return ApiResponseBuilder.send(
       res,
       200,
       ApiResponseBuilder.success(
         "Project roles retrieved successfully",
-        { roles: projectRoles },
+        { roles: transformedProjectRoles },
         undefined,
         req.requestId
       )

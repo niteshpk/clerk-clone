@@ -15,8 +15,8 @@
 
   <clr-dg-row *clrDgItems="let role of roles">
     <clr-dg-cell>{{ role.role }}</clr-dg-cell>
-    <clr-dg-cell>{{ role.created_at | date : "medium" }}</clr-dg-cell>
-    <clr-dg-cell>{{ role.updated_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ role.createdAt | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ role.updatedAt | date : "medium" }}</clr-dg-cell>
     <clr-dg-cell>
       <cds-icon shape="pencil" (click)="onEditRole(role, $event)"></cds-icon>
       <cds-icon shape="trash" (click)="onDeleteRole(role, $event)"></cds-icon>
@@ -62,8 +62,8 @@
         <label>Org</label>
         <select
           clrSelect
-          name="organization_id"
-          formControlName="organization_id"
+          name="project_id"
+          formControlName="project_id"
           class="w-100"
         >
           <option *ngFor="let project of projects" [value]="project.value">

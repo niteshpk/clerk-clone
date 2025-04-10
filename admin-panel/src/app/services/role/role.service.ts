@@ -8,7 +8,7 @@ import { environment } from "@environments/environment";
   providedIn: "root",
 })
 export class RoleService {
-  private readonly BASE_URL = environment.apiUrl + "/api/org-roles";
+  private readonly BASE_URL = environment.apiUrl + "/api/project-roles";
 
   constructor(private baseHttp: BaseHttpService) {}
 
