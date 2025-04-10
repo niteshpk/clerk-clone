@@ -17,8 +17,8 @@
   <clr-dg-row *clrDgItems="let project of projects">
     <clr-dg-cell>{{ project.name }}</clr-dg-cell>
     <clr-dg-cell>{{ project.slug }}</clr-dg-cell>
-    <clr-dg-cell>{{ project.created_at | date : "medium" }}</clr-dg-cell>
-    <clr-dg-cell>{{ project.updated_at | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ project.createdAt | date : "medium" }}</clr-dg-cell>
+    <clr-dg-cell>{{ project.updatedAt | date : "medium" }}</clr-dg-cell>
     <clr-dg-cell>
       <cds-icon
         shape="pencil"
