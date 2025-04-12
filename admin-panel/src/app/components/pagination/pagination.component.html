@@ -1,0 +1,9 @@
+<clr-dg-pagination #pagination [clrDgPageSize]="pageSize">
+  <clr-dg-page-size
+    [clrPageSizeOptions]="pageSizeOptions"
+    (clrPageSizeChange)="onPageSizeChange($event)"
+  >
+    Items per page
+  </clr-dg-page-size>
+  {{ firstItem + 1 }} - {{ lastItem }} of {{ totalItems }} items
+</clr-dg-pagination>

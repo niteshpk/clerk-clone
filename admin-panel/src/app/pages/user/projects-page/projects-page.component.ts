@@ -17,6 +17,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { DialogService } from "@services/dialog/dialog.service";
+import { PaginationComponent } from "@components/pagination/pagination.component";
 
 @Component({
   selector: "app-projects-page",
@@ -30,6 +31,7 @@ import { DialogService } from "@services/dialog/dialog.service";
     ReactiveFormsModule,
     ButtonComponent,
     DatePipe,
+    PaginationComponent,
   ],
   templateUrl: "./projects-page.component.html",
   styleUrls: ["./projects-page.component.scss"],
@@ -39,6 +41,8 @@ export class ProjectsPageComponent {
   selectedProject?: Project;
   modalOpen = false;
   isEditMode = false;
+  currentPage = 1;
+  pageSize = 15;
 
   form = new FormGroup({
     name: new FormControl("", [Validators.required]),
@@ -57,6 +61,17 @@ export class ProjectsPageComponent {
     this.orgService.getProjects().subscribe((projects) => {
       this.projects = projects;
     });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadProjects();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.loadProjects();
   }
 
   onAddProject() {

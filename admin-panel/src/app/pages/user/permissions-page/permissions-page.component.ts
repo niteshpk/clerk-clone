@@ -22,6 +22,7 @@ import { SelectOption } from "@models/common.model";
 import { map } from "rxjs";
 import { PermissionService } from "@services/permission/permission.service";
 import { Permission } from "@models/permission.model";
+import { PaginationComponent } from "@components/pagination/pagination.component";
 
 @Component({
   selector: "app-permissions-page",
@@ -35,6 +36,7 @@ import { Permission } from "@models/permission.model";
     ReactiveFormsModule,
     ButtonComponent,
     DatePipe,
+    PaginationComponent,
   ],
   templateUrl: "./permissions-page.component.html",
   styleUrls: ["./permissions-page.component.scss"],
@@ -45,6 +47,8 @@ export class PermissionsPageComponent {
   modalOpen = false;
   isEditMode = false;
   projects: SelectOption[] = [];
+  currentPage = 1;
+  pageSize = 15;
 
   form = new FormGroup({
     permission: new FormControl("", [Validators.required]),
@@ -82,6 +86,17 @@ export class PermissionsPageComponent {
       .subscribe((projects: SelectOption[]) => {
         this.projects = projects;
       });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadPermissions();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.loadPermissions();
   }
 
   onAddPermission() {

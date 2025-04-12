@@ -7,13 +7,15 @@
 </div>
 
 <clr-datagrid>
+  <clr-dg-column class="sr-column">Sr</clr-dg-column>
   <clr-dg-column>Role</clr-dg-column>
   <clr-dg-column>Created At</clr-dg-column>
   <clr-dg-column>Updated At</clr-dg-column>
   <clr-dg-column>Actions</clr-dg-column>
   <clr-dg-placeholder>We couldn't find any roles!</clr-dg-placeholder>
 
-  <clr-dg-row *clrDgItems="let role of roles">
+  <clr-dg-row *clrDgItems="let role of roles; let i = index">
+    <clr-dg-cell class="sr-column">{{ i + 1 }}</clr-dg-cell>
     <clr-dg-cell>{{ role.role }}</clr-dg-cell>
     <clr-dg-cell>{{ role.createdAt | date : "medium" }}</clr-dg-cell>
     <clr-dg-cell>{{ role.updatedAt | date : "medium" }}</clr-dg-cell>
@@ -24,13 +26,13 @@
   </clr-dg-row>
 
   <clr-dg-footer>
-    <clr-dg-pagination #pagination [clrDgPageSize]="15">
-      <clr-dg-page-size [clrPageSizeOptions]="[15, 30, 50, 100]">
-        Roles per page
-      </clr-dg-page-size>
-      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
-      {{ pagination.totalItems }} roles
-    </clr-dg-pagination>
+    <app-pagination
+      [totalItems]="roles.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-pagination>
   </clr-dg-footer>
 </clr-datagrid>
 

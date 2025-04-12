@@ -18,6 +18,9 @@ import {
 } from "@angular/forms";
 import { DialogService } from "@services/dialog/dialog.service";
 import { PermissionsMatrixComponent } from "@components/permissions-matrix/permissions-matrix.component";
+import { PaginationComponent } from "@components/pagination/pagination.component";
+import { BaseComponent } from "@components/base-component/base-component.component";
+
 @Component({
   selector: "app-manage-page",
   standalone: true,
@@ -31,15 +34,18 @@ import { PermissionsMatrixComponent } from "@components/permissions-matrix/permi
     ButtonComponent,
     DatePipe,
     PermissionsMatrixComponent,
+    PaginationComponent,
   ],
   templateUrl: "./manage-page.component.html",
   styleUrls: ["./manage-page.component.scss"],
 })
-export class ManagePageComponent {
+export class ManagePageComponent extends BaseComponent {
   projects: Project[] = [];
   selectedProject?: Project;
   modalOpen = false;
   isEditMode = false;
+  currentPage = 1;
+  pageSize = 15;
 
   form = new FormGroup({
     name: new FormControl("", [Validators.required]),
@@ -48,7 +54,9 @@ export class ManagePageComponent {
   constructor(
     private orgService: ProjectService,
     private dialogService: DialogService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.loadProjects();
@@ -58,6 +66,17 @@ export class ManagePageComponent {
     this.orgService.getProjects().subscribe((projects) => {
       this.projects = projects;
     });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadProjects();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.loadProjects();
   }
 
   onAddProject() {

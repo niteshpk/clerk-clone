@@ -21,6 +21,7 @@ import { Project } from "@models/project.model";
 import { ProjectService } from "@services/project/project.service";
 import { SelectOption } from "@models/common.model";
 import { map } from "rxjs";
+import { PaginationComponent } from "@components/pagination/pagination.component";
 
 @Component({
   selector: "app-roles-page",
@@ -34,6 +35,7 @@ import { map } from "rxjs";
     ReactiveFormsModule,
     ButtonComponent,
     DatePipe,
+    PaginationComponent,
   ],
   templateUrl: "./roles-page.component.html",
   styleUrls: ["./roles-page.component.scss"],
@@ -44,6 +46,8 @@ export class RolesPageComponent {
   modalOpen = false;
   isEditMode = false;
   projects: SelectOption[] = [];
+  currentPage = 1;
+  pageSize = 15;
 
   form = new FormGroup({
     role: new FormControl("", [Validators.required]),
@@ -81,6 +85,17 @@ export class RolesPageComponent {
       .subscribe((projects: SelectOption[]) => {
         this.projects = projects;
       });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadRoles();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.loadRoles();
   }
 
   onAddRole() {

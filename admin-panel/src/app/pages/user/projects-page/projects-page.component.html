@@ -7,16 +7,16 @@
 </div>
 
 <clr-datagrid>
+  <clr-dg-column class="sr-column">Sr</clr-dg-column>
   <clr-dg-column>Name</clr-dg-column>
-  <clr-dg-column>Slug</clr-dg-column>
   <clr-dg-column>Created At</clr-dg-column>
   <clr-dg-column>Updated At</clr-dg-column>
   <clr-dg-column>Actions</clr-dg-column>
   <clr-dg-placeholder>We couldn't find any projects!</clr-dg-placeholder>
 
-  <clr-dg-row *clrDgItems="let project of projects">
+  <clr-dg-row *clrDgItems="let project of projects; let i = index">
+    <clr-dg-cell class="sr-column">{{ i + 1 }}</clr-dg-cell>
     <clr-dg-cell>{{ project.name }}</clr-dg-cell>
-    <clr-dg-cell>{{ project.slug }}</clr-dg-cell>
     <clr-dg-cell>{{ project.createdAt | date : "medium" }}</clr-dg-cell>
     <clr-dg-cell>{{ project.updatedAt | date : "medium" }}</clr-dg-cell>
     <clr-dg-cell>
@@ -32,13 +32,13 @@
   </clr-dg-row>
 
   <clr-dg-footer>
-    <clr-dg-pagination #pagination [clrDgPageSize]="15">
-      <clr-dg-page-size [clrPageSizeOptions]="[15, 30, 50, 100]">
-        Projects per page
-      </clr-dg-page-size>
-      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
-      {{ pagination.totalItems }} projects
-    </clr-dg-pagination>
+    <app-pagination
+      [totalItems]="projects.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-pagination>
   </clr-dg-footer>
 </clr-datagrid>
 
