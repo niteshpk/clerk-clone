@@ -1,7 +1,6 @@
-import { selectUser } from "./../../store/auth/auth.selectors";
-import { AuthService } from "./../../services/auth/auth.service";
+import { AuthService } from "@services/auth/auth.service";
 import { Component } from "@angular/core";
-import { RouterLink, RouterLinkActive } from "@angular/router";
+import { RouterLink, RouterLinkActive, Router } from "@angular/router";
 import { AsyncPipe } from "@angular/common";
 import { ClrIconModule, ClrDropdownModule } from "@clr/angular";
 import { finalize } from "rxjs";
@@ -11,9 +10,7 @@ import { takeUntil } from "rxjs";
 import { User } from "../../models/user.model";
 import { BaseComponent } from "../base-component/base-component.component";
 import { take } from "rxjs";
-import { Store } from "@ngrx/store";
-import { logoutSuccess } from "../../store/auth/auth.actions";
-import { Theme, ThemeService } from "../../services/theme/theme.service";
+import { Theme, ThemeService } from "@services/theme/theme.service";
 
 @Component({
   selector: "app-header",
@@ -34,12 +31,12 @@ export class HeaderComponent extends BaseComponent {
 
   constructor(
     private authService: AuthService,
-    private store: Store,
+    private router: Router,
     public themeService: ThemeService
   ) {
     super();
 
-    this.store.select(selectUser).subscribe((user) => {
+    this.authService.user$.subscribe((user) => {
       this.user = user;
     });
   }
@@ -63,7 +60,8 @@ export class HeaderComponent extends BaseComponent {
         finalize(() => this.setLoading(false))
       )
       .subscribe(() => {
-        this.store.dispatch(logoutSuccess());
+        this.authService.clearAuth();
+        this.router.navigate(["/auth/login"]);
       });
   }
 }

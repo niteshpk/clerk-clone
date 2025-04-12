@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BaseHttpService } from "@services/base-http/base-http.service";
-import { Project, ProjectResponse } from "@app/models/project.model";
+import { Project, ProjectResponse } from "@models/project.model";
 import { map, Observable } from "rxjs";
 import { environment } from "@environments/environment";
 

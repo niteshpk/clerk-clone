@@ -16,12 +16,12 @@ import {
   Validators,
 } from "@angular/forms";
 import { DialogService } from "@services/dialog/dialog.service";
-import { Project } from "@app/models/project.model";
-import { ProjectService } from "@app/services/project/project.service";
-import { SelectOption } from "@app/models/common.model";
+import { Project } from "@models/project.model";
+import { ProjectService } from "@services/project/project.service";
+import { SelectOption } from "@models/common.model";
 import { map } from "rxjs";
-import { PermissionService } from "@app/services/permission/permission.service";
-import { Permission } from "@app/models/permission.model";
+import { PermissionService } from "@services/permission/permission.service";
+import { Permission } from "@models/permission.model";
 
 @Component({
   selector: "app-permissions-page",

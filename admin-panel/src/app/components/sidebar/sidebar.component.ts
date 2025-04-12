@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { ClrVerticalNavModule } from "@clr/angular";
-import { NavItem } from "@app/models/common.model";
+import { NavItem } from "@models/common.model";
 import { ClrIconModule } from "@clr/angular";
 import { NgForOf } from "@angular/common";
 

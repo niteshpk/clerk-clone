@@ -5,11 +5,11 @@ import {
   ClrVerticalNavModule,
   ClrIconModule,
 } from "@clr/angular";
-import { AppLevelAlertComponent } from "../../components/app-level-alert/app-level-alert.component";
-import { DialogComponent } from "../../components/dialog/dialog.component";
-import { HeaderComponent } from "../../components/header/header.component";
-import { AppLevelAlertService } from "../../services/app-level-alert/app-level-alert.service";
-import { SidebarComponent } from "@app/components/sidebar/sidebar.component";
+import { AppLevelAlertComponent } from "@components/app-level-alert/app-level-alert.component";
+import { DialogComponent } from "@components/dialog/dialog.component";
+import { HeaderComponent } from "@components/header/header.component";
+import { AppLevelAlertService } from "@services/app-level-alert/app-level-alert.service";
+import { SidebarComponent } from "@components/sidebar/sidebar.component";
 
 @Component({
   selector: "app-user-pages",

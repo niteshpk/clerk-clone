@@ -12,9 +12,7 @@ import { ClrDropdownModule, ClrFormsModule } from "@clr/angular";
 import { AuthService } from "@services/auth/auth.service";
 import { BaseComponent } from "@components/base-component/base-component.component";
 import { finalize, of, takeUntil, catchError, take } from "rxjs";
-import { Store } from "@ngrx/store";
-import { loginSuccess } from "@store/auth/auth.actions";
-import { selectIsAuthenticated } from "@store/auth/auth.selectors";
+import { LocalStorageService } from "@services/storage/local-storage.service";
 
 @Component({
   selector: "app-login-page",
@@ -43,7 +41,7 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
     private formBuilder: NonNullableFormBuilder,
     private authService: AuthService,
     private router: Router,
-    private store: Store
+    private localStorageService: LocalStorageService
   ) {
     super();
 
@@ -54,16 +52,7 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.store
-      .select(selectIsAuthenticated)
-      .pipe(take(1), takeUntil(this.onDestroy$))
-      .subscribe((isAuthenticated) => {
-        if (isAuthenticated) {
-          this.router.navigateByUrl("/user/first-page");
-        }
-      });
-  }
+  ngOnInit(): void {}
 
   onSubmit() {
     this.errorMessage = "";
@@ -75,8 +64,10 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
 
     this.setLoading(true);
 
+    const { email, password } = this.form.getRawValue();
+
     this.authService
-      .login(this.form.getRawValue())
+      .login(email, password)
       .pipe(
         take(1),
         takeUntil(this.onDestroy$),
@@ -91,12 +82,8 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
           return;
         }
 
-        this.store.dispatch(
-          loginSuccess({
-            token: res.data.token,
-            user: res.data.user,
-          })
-        );
+        this.authService.setToken(res.data.token);
+        this.authService.setUser(res.data.user);
 
         this.router.navigateByUrl("/user/first-page");
       });

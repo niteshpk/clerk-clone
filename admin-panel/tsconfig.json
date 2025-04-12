@@ -25,10 +25,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["src/app/*"],
       "@components/*": ["src/app/components/*"],
       "@services/*": ["src/app/services/*"],
-      "@store/*": ["src/app/store/*"],
       "@interceptors/*": ["src/app/interceptors/*"],
       "@pages/*": ["src/app/pages/*"],
       "@utils/*": ["src/app/utils/*"],

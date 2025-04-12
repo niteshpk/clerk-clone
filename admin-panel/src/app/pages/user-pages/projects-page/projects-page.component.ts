@@ -7,8 +7,8 @@ import {
   ClrFormsModule,
 } from "@clr/angular";
 import { ButtonComponent } from "@components/button/button.component";
-import { ProjectService } from "@app/services/project/project.service";
-import { Project } from "@app/models/project.model";
+import { ProjectService } from "@services/project/project.service";
+import { Project } from "@models/project.model";
 import { DatePipe } from "@angular/common";
 import {
   FormControl,

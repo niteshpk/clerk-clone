@@ -10,9 +10,9 @@ import {
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { ClrDropdownModule, ClrFormsModule } from "@clr/angular";
 import { take, takeUntil, catchError, of, finalize } from "rxjs";
-import { AuthService } from "../../../services/auth/auth.service";
-import { validateEmail } from "../../../utils/validations";
-import { BaseComponent } from "../../../components/base-component/base-component.component";
+import { AuthService } from "@services/auth/auth.service";
+import { validateEmail } from "@utils/validations";
+import { BaseComponent } from "@components/base-component/base-component.component";
 
 @Component({
   selector: "app-reset-password-page",

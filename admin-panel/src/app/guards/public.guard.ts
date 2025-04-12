@@ -1,20 +1,19 @@
 import { inject } from "@angular/core";
-import { Router } from "@angular/router";
-import { Store } from "@ngrx/store";
-import { selectIsAuthenticated } from "../store/auth/auth.selectors";
-import { take, map } from "rxjs";
+import { Router, type CanActivateFn } from "@angular/router";
+import { AuthService } from "@services/auth/auth.service";
+import { map, take } from "rxjs/operators";
 
-export const publicGuard = () => {
+export const publicGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const store = inject(Store);
+  const authService = inject(AuthService);
 
-  return store.select(selectIsAuthenticated).pipe(
+  return authService.isAuthenticated$.pipe(
     take(1),
     map((isAuthenticated) => {
       if (!isAuthenticated) {
         return true;
       }
-      return router.navigateByUrl("/user/first-page");
+      return router.createUrlTree(["/user/first-page"]);
     })
   );
 };

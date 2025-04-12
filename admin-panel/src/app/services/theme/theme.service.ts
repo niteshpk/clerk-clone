@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { LocalStorageService } from "../storage/local-storage.service";
 
 export type Theme = "light" | "dark";
 
@@ -8,32 +7,37 @@ export type Theme = "light" | "dark";
   providedIn: "root",
 })
 export class ThemeService {
-  private themeSubject = new BehaviorSubject<Theme>("light");
+  private themeSubject = new BehaviorSubject<Theme>(this.getInitialTheme());
   theme$ = this.themeSubject.asObservable();
 
-  constructor(private localStorageService: LocalStorageService) {
-    // Initialize theme from localStorage or system preference
-    const savedTheme = this.localStorageService.getItem("theme") as Theme;
-
-    if (savedTheme) {
-      this.setTheme(savedTheme);
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      this.setTheme(prefersDark ? "dark" : "light");
-    }
+  constructor() {
+    // Apply initial theme
+    this.applyTheme(this.themeSubject.value);
   }
 
-  setTheme(theme: Theme): void {
-    this.themeSubject.next(theme);
-    this.localStorageService.setItem("theme", theme);
-    document.body.setAttribute("cds-theme", theme);
+  private getInitialTheme(): Theme {
+    // Check localStorage first
+    const savedTheme = localStorage.getItem("theme") as Theme;
+    if (savedTheme) {
+      return savedTheme;
+    }
+
+    // Check system preference
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+
+    return "light";
   }
 
   toggleTheme(): void {
-    const currentTheme = this.themeSubject.value;
-    this.setTheme(currentTheme === "light" ? "dark" : "light");
+    const newTheme = this.themeSubject.value === "light" ? "dark" : "light";
+    this.themeSubject.next(newTheme);
+    this.applyTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+  }
+
+  private applyTheme(theme: Theme): void {
+    document.documentElement.setAttribute("data-theme", theme);
   }
 }
