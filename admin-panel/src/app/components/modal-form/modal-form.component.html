@@ -1,0 +1,25 @@
+<clr-modal
+  [(clrModalOpen)]="modalOpen"
+  (clrModalOpenChange)="modalOpenChange.emit($event)"
+>
+  <h3 class="modal-title">{{ title }}</h3>
+
+  <div class="modal-body">
+    <app-form-horizontal [form]="form" (onSubmit)="handleSubmit()">
+      <ng-content></ng-content>
+    </app-form-horizontal>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="handleCancel()">
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid"
+      (click)="handleSubmit()"
+    >
+      {{ submitButtonText }}
+    </button>
+  </div>
+</clr-modal>

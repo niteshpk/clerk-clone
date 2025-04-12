@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  width: 100%;
+
+  ::ng-deep {
+    .clr-error .clr-select-wrapper::after,
+    .clr-success .clr-select-wrapper::after {
+      right: var(--clr-forms-baseline);
+    }
+  }
+}

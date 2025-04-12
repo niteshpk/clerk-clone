@@ -22,6 +22,11 @@ import { ProjectService } from "@services/project/project.service";
 import { SelectOption } from "@models/common.model";
 import { map } from "rxjs";
 import { PaginationComponent } from "@components/pagination/pagination.component";
+import { InputContainerComponent } from "@components/input-container/input-container.component";
+import { SelectContainerComponent } from "@components/select-container/select-container.component";
+import { ModalFormComponent } from "@components/modal-form/modal-form.component";
+import { BaseComponent } from "@components/base/base.component";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-roles-page",
@@ -36,11 +41,14 @@ import { PaginationComponent } from "@components/pagination/pagination.component
     ButtonComponent,
     DatePipe,
     PaginationComponent,
+    InputContainerComponent,
+    SelectContainerComponent,
+    ModalFormComponent,
   ],
   templateUrl: "./roles-page.component.html",
   styleUrls: ["./roles-page.component.scss"],
 })
-export class RolesPageComponent {
+export class RolesPageComponent extends BaseComponent {
   roles: Role[] = [];
   selectedRole?: Role;
   modalOpen = false;
@@ -58,7 +66,9 @@ export class RolesPageComponent {
     private roleService: RoleService,
     private dialogService: DialogService,
     private projectService: ProjectService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.loadRoles();
@@ -66,9 +76,12 @@ export class RolesPageComponent {
   }
 
   loadRoles() {
-    this.roleService.getRoles().subscribe((roles) => {
-      this.roles = roles;
-    });
+    this.roleService
+      .getRoles()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((roles) => {
+        this.roles = roles;
+      });
   }
 
   loadProjects() {
@@ -80,7 +93,8 @@ export class RolesPageComponent {
             label: project.name,
             value: project.id.toString(),
           }))
-        )
+        ),
+        takeUntil(this.destroy$)
       )
       .subscribe((projects: SelectOption[]) => {
         this.projects = projects;
@@ -129,11 +143,15 @@ export class RolesPageComponent {
         acceptText: "Delete",
         acceptType: "danger",
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.roleService.deleteRole(role.id).subscribe(() => {
-            this.loadRoles();
-          });
+          this.roleService
+            .deleteRole(role.id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+              this.loadRoles();
+            });
         }
       });
   }
@@ -145,6 +163,7 @@ export class RolesPageComponent {
       if (this.isEditMode && this.selectedRole) {
         this.roleService
           .updateRole(this.selectedRole.id, formData)
+          .pipe(takeUntil(this.destroy$))
           .subscribe(() => {
             this.loadRoles();
             this.modalOpen = false;
@@ -152,10 +171,13 @@ export class RolesPageComponent {
         return;
       }
 
-      this.roleService.createRole(formData).subscribe(() => {
-        this.loadRoles();
-        this.modalOpen = false;
-      });
+      this.roleService
+        .createRole(formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.loadRoles();
+          this.modalOpen = false;
+        });
     }
   }
 

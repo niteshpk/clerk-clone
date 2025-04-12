@@ -5,3 +5,22 @@
 .sr-column {
   max-width: 30px;
 }
+
+.w-100 {
+  width: 100% !important;
+}
+
+.header-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+cds-icon {
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.clr-control-container {
+  width: 100%;
+}

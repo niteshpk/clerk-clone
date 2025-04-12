@@ -7,7 +7,6 @@ import {
   ClrFormsModule,
 } from "@clr/angular";
 import { ButtonComponent } from "@components/button/button.component";
-import { Role } from "@models/role.model";
 import { DatePipe } from "@angular/common";
 import {
   FormControl,
@@ -23,6 +22,11 @@ import { map } from "rxjs";
 import { PermissionService } from "@services/permission/permission.service";
 import { Permission } from "@models/permission.model";
 import { PaginationComponent } from "@components/pagination/pagination.component";
+import { InputContainerComponent } from "@components/input-container/input-container.component";
+import { SelectContainerComponent } from "@components/select-container/select-container.component";
+import { ModalFormComponent } from "@components/modal-form/modal-form.component";
+import { BaseComponent } from "@components/base/base.component";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-permissions-page",
@@ -37,11 +41,14 @@ import { PaginationComponent } from "@components/pagination/pagination.component
     ButtonComponent,
     DatePipe,
     PaginationComponent,
+    InputContainerComponent,
+    SelectContainerComponent,
+    ModalFormComponent,
   ],
   templateUrl: "./permissions-page.component.html",
   styleUrls: ["./permissions-page.component.scss"],
 })
-export class PermissionsPageComponent {
+export class PermissionsPageComponent extends BaseComponent {
   permissions: Permission[] = [];
   selectedPermission?: Permission;
   modalOpen = false;
@@ -59,7 +66,9 @@ export class PermissionsPageComponent {
     private permissionService: PermissionService,
     private dialogService: DialogService,
     private projectService: ProjectService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.loadPermissions();
@@ -67,9 +76,12 @@ export class PermissionsPageComponent {
   }
 
   loadPermissions() {
-    this.permissionService.getPermissions().subscribe((permissions) => {
-      this.permissions = permissions;
-    });
+    this.permissionService
+      .getPermissions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((permissions) => {
+        this.permissions = permissions;
+      });
   }
 
   loadProjects() {
@@ -81,7 +93,8 @@ export class PermissionsPageComponent {
             label: project.name,
             value: project.id.toString(),
           }))
-        )
+        ),
+        takeUntil(this.destroy$)
       )
       .subscribe((projects: SelectOption[]) => {
         this.projects = projects;
@@ -130,10 +143,12 @@ export class PermissionsPageComponent {
         acceptText: "Delete",
         acceptType: "danger",
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe((confirmed) => {
         if (confirmed) {
           this.permissionService
             .deletePermission(permission.id)
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
               this.loadPermissions();
             });
@@ -143,11 +158,12 @@ export class PermissionsPageComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      const formData = this.form.value as Partial<Role>;
+      const formData = this.form.value as Partial<Permission>;
 
       if (this.isEditMode && this.selectedPermission) {
         this.permissionService
           .updatePermission(this.selectedPermission.id, formData)
+          .pipe(takeUntil(this.destroy$))
           .subscribe(() => {
             this.loadPermissions();
             this.modalOpen = false;
@@ -155,10 +171,13 @@ export class PermissionsPageComponent {
         return;
       }
 
-      this.permissionService.createPermission(formData).subscribe(() => {
-        this.loadPermissions();
-        this.modalOpen = false;
-      });
+      this.permissionService
+        .createPermission(formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.loadPermissions();
+          this.modalOpen = false;
+        });
     }
   }
 

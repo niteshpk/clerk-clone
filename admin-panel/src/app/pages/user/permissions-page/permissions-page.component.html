@@ -42,56 +42,26 @@
   </clr-dg-footer>
 </clr-datagrid>
 
-<clr-modal [(clrModalOpen)]="modalOpen">
-  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Permission</h3>
+<app-modal-form
+  [(modalOpen)]="modalOpen"
+  [title]="isEditMode ? 'Edit Permission' : 'Create Permission'"
+  [form]="form"
+  [submitButtonText]="isEditMode ? 'Update Permission' : 'Create Permission'"
+  (onSubmit)="onSubmit()"
+  (onCancel)="onCancel()"
+>
+  <app-input-container
+    label="Permission"
+    [control]="form.controls.permission"
+    name="permission"
+    placeholder="Enter permission name"
+    [required]="true"
+  ></app-input-container>
 
-  <div class="modal-body">
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-      clrForm
-      clrLayout="horizontal"
-      clrLabelSize="2"
-    >
-      <clr-input-container>
-        <label for="permission">Permission</label>
-        <input
-          type="text"
-          autocomplete="permission"
-          name="permission"
-          clrInput
-          placeholder="Enter permission name"
-          formControlName="permission"
-          class="w-100"
-        />
-      </clr-input-container>
-
-      <clr-select-container class="w-100">
-        <label>Project</label>
-        <select
-          clrSelect
-          name="project_id"
-          formControlName="project_id"
-          class="w-100"
-        >
-          <option *ngFor="let project of projects" [value]="project.value">
-            {{ project.label }}
-          </option>
-        </select>
-      </clr-select-container>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="onCancel()">
-      Cancel
-    </button>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="form.invalid"
-      (click)="onSubmit()"
-    >
-      {{ isEditMode ? "Update" : "Create" }} Permission
-    </button>
-  </div>
-</clr-modal>
+  <app-select-container
+    label="Project"
+    [control]="form.controls.project_id"
+    name="project_id"
+    [options]="projects"
+  ></app-select-container>
+</app-modal-form>

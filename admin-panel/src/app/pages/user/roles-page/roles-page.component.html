@@ -36,56 +36,26 @@
   </clr-dg-footer>
 </clr-datagrid>
 
-<clr-modal [(clrModalOpen)]="modalOpen">
-  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Role</h3>
+<app-modal-form
+  [(modalOpen)]="modalOpen"
+  [title]="isEditMode ? 'Edit Role' : 'Create Role'"
+  [form]="form"
+  [submitButtonText]="isEditMode ? 'Update Role' : 'Create Role'"
+  (onSubmit)="onSubmit()"
+  (onCancel)="onCancel()"
+>
+  <app-input-container
+    label="Role"
+    [control]="form.controls.role"
+    name="role"
+    placeholder="Enter role name"
+    [required]="true"
+  ></app-input-container>
 
-  <div class="modal-body">
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-      clrForm
-      clrLayout="horizontal"
-      clrLabelSize="2"
-    >
-      <clr-input-container>
-        <label for="role">Role</label>
-        <input
-          type="text"
-          autocomplete="role"
-          name="role"
-          clrInput
-          placeholder="Enter role name"
-          formControlName="role"
-          class="w-100"
-        />
-      </clr-input-container>
-
-      <clr-select-container class="w-100">
-        <label>Project</label>
-        <select
-          clrSelect
-          name="project_id"
-          formControlName="project_id"
-          class="w-100"
-        >
-          <option *ngFor="let project of projects" [value]="project.value">
-            {{ project.label }}
-          </option>
-        </select>
-      </clr-select-container>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="onCancel()">
-      Cancel
-    </button>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="form.invalid"
-      (click)="onSubmit()"
-    >
-      {{ isEditMode ? "Update" : "Create" }} Role
-    </button>
-  </div>
-</clr-modal>
+  <app-select-container
+    label="Project"
+    [control]="form.controls.project_id"
+    name="project_id"
+    [options]="projects"
+  ></app-select-container>
+</app-modal-form>

@@ -39,11 +39,14 @@ export class HeaderComponent extends BaseComponent {
     this.authService.user$.subscribe((user) => {
       this.user = user;
     });
+
+    this.themeService.theme$.subscribe((theme) => {
+      this.theme = theme;
+    });
   }
 
   toggleTheme() {
     this.themeService.toggleTheme();
-    this.theme = this.theme === "light" ? "dark" : "light";
   }
 
   logout() {

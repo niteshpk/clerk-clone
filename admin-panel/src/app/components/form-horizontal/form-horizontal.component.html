@@ -1,0 +1,9 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit.emit()"
+  clrForm
+  clrLayout="horizontal"
+  clrLabelSize="1"
+>
+  <ng-content></ng-content>
+</form>

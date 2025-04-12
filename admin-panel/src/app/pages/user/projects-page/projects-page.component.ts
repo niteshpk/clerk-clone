@@ -18,6 +18,10 @@ import {
 } from "@angular/forms";
 import { DialogService } from "@services/dialog/dialog.service";
 import { PaginationComponent } from "@components/pagination/pagination.component";
+import { InputContainerComponent } from "@components/input-container/input-container.component";
+import { ModalFormComponent } from "@components/modal-form/modal-form.component";
+import { BaseComponent } from "@components/base/base.component";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-projects-page",
@@ -32,11 +36,13 @@ import { PaginationComponent } from "@components/pagination/pagination.component
     ButtonComponent,
     DatePipe,
     PaginationComponent,
+    InputContainerComponent,
+    ModalFormComponent,
   ],
   templateUrl: "./projects-page.component.html",
   styleUrls: ["./projects-page.component.scss"],
 })
-export class ProjectsPageComponent {
+export class ProjectsPageComponent extends BaseComponent {
   projects: Project[] = [];
   selectedProject?: Project;
   modalOpen = false;
@@ -51,16 +57,21 @@ export class ProjectsPageComponent {
   constructor(
     private orgService: ProjectService,
     private dialogService: DialogService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.loadProjects();
   }
 
   loadProjects() {
-    this.orgService.getProjects().subscribe((projects) => {
-      this.projects = projects;
-    });
+    this.orgService
+      .getProjects()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((projects) => {
+        this.projects = projects;
+      });
   }
 
   onPageChange(page: number) {
@@ -104,11 +115,15 @@ export class ProjectsPageComponent {
         acceptText: "Delete",
         acceptType: "danger",
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.orgService.deleteProject(org.id).subscribe(() => {
-            this.loadProjects();
-          });
+          this.orgService
+            .deleteProject(org.id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+              this.loadProjects();
+            });
         }
       });
   }
@@ -120,6 +135,7 @@ export class ProjectsPageComponent {
       if (this.isEditMode && this.selectedProject) {
         this.orgService
           .updateProject(this.selectedProject.id, formData)
+          .pipe(takeUntil(this.destroy$))
           .subscribe(() => {
             this.loadProjects();
             this.modalOpen = false;
@@ -127,10 +143,13 @@ export class ProjectsPageComponent {
         return;
       }
 
-      this.orgService.createProject(formData).subscribe(() => {
-        this.loadProjects();
-        this.modalOpen = false;
-      });
+      this.orgService
+        .createProject(formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.loadProjects();
+          this.modalOpen = false;
+        });
     }
   }
 

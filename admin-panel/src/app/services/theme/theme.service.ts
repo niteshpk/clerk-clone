@@ -35,6 +35,7 @@ export class ThemeService {
     this.themeSubject.next(newTheme);
     this.applyTheme(newTheme);
     localStorage.setItem("theme", newTheme);
+    document.body.setAttribute("cds-theme", newTheme);
   }
 
   private applyTheme(theme: Theme): void {

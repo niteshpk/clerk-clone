@@ -46,42 +46,19 @@
   </clr-dg-footer>
 </clr-datagrid>
 
-<clr-modal [(clrModalOpen)]="modalOpen">
-  <h3 class="modal-title">{{ isEditMode ? "Edit" : "Create" }} Project</h3>
-
-  <div class="modal-body">
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-      clrForm
-      clrLayout="horizontal"
-      clrLabelSize="2"
-    >
-      <clr-input-container>
-        <label for="name">Name</label>
-        <input
-          type="text"
-          autocomplete="name"
-          name="name"
-          clrInput
-          placeholder="Enter project name"
-          formControlName="name"
-          class="w-100"
-        />
-      </clr-input-container>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="onCancel()">
-      Cancel
-    </button>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="form.invalid"
-      (click)="onSubmit()"
-    >
-      {{ isEditMode ? "Update" : "Create" }} Project
-    </button>
-  </div>
-</clr-modal>
+<app-modal-form
+  [modalOpen]="modalOpen"
+  [title]="isEditMode ? 'Edit Project' : 'Create Project'"
+  [form]="form"
+  [submitButtonText]="isEditMode ? 'Update Project' : 'Create Project'"
+  (onSubmit)="onSubmit()"
+  (onCancel)="onCancel()"
+>
+  <app-input-container
+    label="Name"
+    [control]="form.controls.name"
+    name="name"
+    placeholder="Enter project name"
+    [required]="true"
+  ></app-input-container>
+</app-modal-form>
