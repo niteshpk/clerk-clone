@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { AuthPagesComponent } from "./pages/auth/auth-pages/auth-pages.component";
-import { UserPagesComponent } from "./pages/user-pages/user-pages.component";
+import { UserPagesComponent } from "./pages/user/user-pages.component";
 import { authGuard } from "@guards/auth.guard";
 import { publicGuard } from "@guards/public.guard";
 import { AUTH_ROUTES } from "@pages/auth/auth.routes";

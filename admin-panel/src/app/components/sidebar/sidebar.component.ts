@@ -43,6 +43,11 @@ export class SidebarComponent {
       icon: "bolt",
     },
     {
+      path: "/user/manage-page",
+      label: "Manage Page",
+      icon: "bolt",
+    },
+    {
       path: "/user/blank-page",
       label: "Blank Page",
       icon: "bolt",
