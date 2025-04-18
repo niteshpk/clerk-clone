@@ -1,1 +1,25 @@
+.table-responsive {
+  margin-top: 0;
+  overflow-x: auto;
+}
 
+table {
+  width: 100%;
+  min-width: 600px;
+  margin-top: 0.2rem;
+}
+
+th,
+td {
+  text-align: left;
+  vertical-align: middle;
+}
+
+th,
+td {
+  text-align: left;
+}
+
+:host {
+  width: 100%;
+}

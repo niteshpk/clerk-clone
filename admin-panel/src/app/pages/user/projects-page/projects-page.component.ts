@@ -20,7 +20,7 @@ import { DialogService } from "@services/dialog/dialog.service";
 import { PaginationComponent } from "@components/pagination/pagination.component";
 import { InputContainerComponent } from "@components/input-container/input-container.component";
 import { ModalFormComponent } from "@components/modal-form/modal-form.component";
-import { BaseComponent } from "@components/base/base.component";
+import { BaseComponent } from "@components/base-component/base-component.component";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
@@ -68,7 +68,7 @@ export class ProjectsPageComponent extends BaseComponent {
   loadProjects() {
     this.orgService
       .getProjects()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((projects) => {
         this.projects = projects;
       });
@@ -115,12 +115,12 @@ export class ProjectsPageComponent extends BaseComponent {
         acceptText: "Delete",
         acceptType: "danger",
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((confirmed) => {
         if (confirmed) {
           this.orgService
             .deleteProject(org.id)
-            .pipe(takeUntil(this.destroy$))
+            .pipe(takeUntil(this.onDestroy$))
             .subscribe(() => {
               this.loadProjects();
             });
@@ -135,7 +135,7 @@ export class ProjectsPageComponent extends BaseComponent {
       if (this.isEditMode && this.selectedProject) {
         this.orgService
           .updateProject(this.selectedProject.id, formData)
-          .pipe(takeUntil(this.destroy$))
+          .pipe(takeUntil(this.onDestroy$))
           .subscribe(() => {
             this.loadProjects();
             this.modalOpen = false;
@@ -145,7 +145,7 @@ export class ProjectsPageComponent extends BaseComponent {
 
       this.orgService
         .createProject(formData)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntil(this.onDestroy$))
         .subscribe(() => {
           this.loadProjects();
           this.modalOpen = false;

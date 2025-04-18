@@ -25,7 +25,7 @@ import { PaginationComponent } from "@components/pagination/pagination.component
 import { InputContainerComponent } from "@components/input-container/input-container.component";
 import { SelectContainerComponent } from "@components/select-container/select-container.component";
 import { ModalFormComponent } from "@components/modal-form/modal-form.component";
-import { BaseComponent } from "@components/base/base.component";
+import { BaseComponent } from "@components/base-component/base-component.component";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
@@ -78,7 +78,7 @@ export class PermissionsPageComponent extends BaseComponent {
   loadPermissions() {
     this.permissionService
       .getPermissions()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((permissions) => {
         this.permissions = permissions;
       });
@@ -94,7 +94,7 @@ export class PermissionsPageComponent extends BaseComponent {
             value: project.id.toString(),
           }))
         ),
-        takeUntil(this.destroy$)
+        takeUntil(this.onDestroy$)
       )
       .subscribe((projects: SelectOption[]) => {
         this.projects = projects;
@@ -143,12 +143,12 @@ export class PermissionsPageComponent extends BaseComponent {
         acceptText: "Delete",
         acceptType: "danger",
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((confirmed) => {
         if (confirmed) {
           this.permissionService
             .deletePermission(permission.id)
-            .pipe(takeUntil(this.destroy$))
+            .pipe(takeUntil(this.onDestroy$))
             .subscribe(() => {
               this.loadPermissions();
             });
@@ -163,7 +163,7 @@ export class PermissionsPageComponent extends BaseComponent {
       if (this.isEditMode && this.selectedPermission) {
         this.permissionService
           .updatePermission(this.selectedPermission.id, formData)
-          .pipe(takeUntil(this.destroy$))
+          .pipe(takeUntil(this.onDestroy$))
           .subscribe(() => {
             this.loadPermissions();
             this.modalOpen = false;
@@ -173,7 +173,7 @@ export class PermissionsPageComponent extends BaseComponent {
 
       this.permissionService
         .createPermission(formData)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntil(this.onDestroy$))
         .subscribe(() => {
           this.loadPermissions();
           this.modalOpen = false;

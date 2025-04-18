@@ -1,163 +1,152 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
-  ClrConditionalModule,
-  ClrDataModule,
-  ClrModalModule,
-  ClrFormsModule,
-} from "@clr/angular";
-import { ButtonComponent } from "@components/button/button.component";
-import { ProjectService } from "@services/project/project.service";
-import { Project } from "@models/project.model";
-import { DatePipe } from "@angular/common";
-import {
+  Form,
+  FormArray,
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from "@angular/forms";
-import { DialogService } from "@services/dialog/dialog.service";
-import { PaginationComponent } from "@components/pagination/pagination.component";
-import { PermissionsMatrixComponent } from "@components/permissions-matrix/permissions-matrix.component";
-import { InputContainerComponent } from "@components/input-container/input-container.component";
-import { FormHorizontalComponent } from "@components/form-horizontal/form-horizontal.component";
-import { ModalFormComponent } from "@components/modal-form/modal-form.component";
-import { BaseComponent } from "@components/base/base.component";
-import { takeUntil } from "rxjs/operators";
+import { ClarityModule } from "@clr/angular";
+import { combineLatest, finalize, Observable, takeUntil } from "rxjs";
+import { RoleService } from "@services/role/role.service";
+import { PermissionService } from "@services/permission/permission.service";
+import { Role } from "@models/role.model";
+import { Permission } from "@models/permission.model";
+import { ActivatedRoute, Router } from "@angular/router";
+import { SelectContainerComponent } from "@components/select-container/select-container.component";
+import { SelectOption } from "@models/common.model";
+import { ProjectService } from "@services/project/project.service";
+import { SpinnerComponent } from "@components/spinner/spinner.component";
+import { BaseComponent } from "@components/base-component/base-component.component";
 
 @Component({
   selector: "app-manage-page",
   standalone: true,
   imports: [
     CommonModule,
-    ClrDataModule,
-    ClrConditionalModule,
-    ClrModalModule,
-    ClrFormsModule,
+    FormsModule,
     ReactiveFormsModule,
-    ButtonComponent,
-    DatePipe,
-    PaginationComponent,
-    InputContainerComponent,
-    PermissionsMatrixComponent,
-    ModalFormComponent,
+    ClarityModule,
+    SelectContainerComponent,
+    SpinnerComponent,
   ],
   templateUrl: "./manage-page.component.html",
   styleUrls: ["./manage-page.component.scss"],
 })
-export class ManagePageComponent extends BaseComponent {
-  projects: Project[] = [];
-  selectedProject?: Project;
-  modalOpen = false;
-  isEditMode = false;
-  currentPage = 1;
-  pageSize = 15;
+export class ManagePageComponent extends BaseComponent implements OnInit {
+  roles$: Observable<Role[]>;
+  permissions$: Observable<Permission[]>;
+  hasChanges = false;
+  projectId: string = "";
+  projectControl = new FormControl("");
+  projects: SelectOption[] = [];
 
-  form = new FormGroup({
-    name: new FormControl("", [Validators.required]),
+  form: FormGroup = new FormGroup({
+    projectId: new FormControl(""),
+    roles: new FormArray([]),
   });
 
+  get rolesFA() {
+    return this.form.get("roles") as FormArray;
+  }
+
   constructor(
-    private orgService: ProjectService,
-    private dialogService: DialogService
+    private roleService: RoleService,
+    private permissionService: PermissionService,
+    private projectService: ProjectService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     super();
+    this.roles$ = this.roleService.getRoles();
+    this.permissions$ = this.permissionService.getPermissions();
   }
 
   ngOnInit() {
-    this.loadProjects();
-  }
+    this.setLoading(true);
 
-  loadProjects() {
-    this.orgService
+    this.projectService
       .getProjects()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(finalize(() => this.setLoading(false)))
       .subscribe((projects) => {
-        this.projects = projects;
+        this.projects = projects.map((project) => ({
+          label: project.name,
+          value: project.id.toString(),
+        }));
       });
-  }
 
-  onPageChange(page: number) {
-    this.currentPage = page;
-    this.loadProjects();
-  }
-
-  onPageSizeChange(size: number) {
-    this.pageSize = size;
-    this.currentPage = 1;
-    this.loadProjects();
-  }
-
-  onAddProject() {
-    this.isEditMode = false;
-    this.selectedProject = undefined;
-    this.form.reset();
-    this.modalOpen = true;
-  }
-
-  onEditProject(org: Project, $event: Event) {
-    $event.stopPropagation();
-    $event.preventDefault();
-
-    this.isEditMode = true;
-    this.selectedProject = org;
-    this.form.patchValue({
-      name: org.name,
-    });
-    this.modalOpen = true;
-  }
-
-  onDeleteProject(org: Project, $event: Event) {
-    $event.stopPropagation();
-    $event.preventDefault();
-
-    this.dialogService
-      .warning({
-        title: "Delete Project",
-        content: `Are you sure you want to delete ${org.name}?`,
-        acceptText: "Delete",
-        acceptType: "danger",
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this.orgService
-            .deleteProject(org.id)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-              this.loadProjects();
-            });
-        }
-      });
-  }
-
-  onSubmit() {
-    if (this.form.valid) {
-      const formData = this.form.value as Partial<Project>;
-
-      if (this.isEditMode && this.selectedProject) {
-        this.orgService
-          .updateProject(this.selectedProject.id, formData)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(() => {
-            this.loadProjects();
-            this.modalOpen = false;
-          });
-        return;
+    this.route.params.subscribe((params) => {
+      this.projectId = params["projectId"];
+      if (this.projectControl.getRawValue() !== this.projectId) {
+        this.projectControl.patchValue(this.projectId);
       }
-
-      this.orgService
-        .createProject(formData)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.loadProjects();
-          this.modalOpen = false;
+      this.form.get("projectId")?.patchValue(this.projectId);
+      this.setLoading(true);
+      combineLatest([this.roles$, this.permissions$])
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe(([roles, permissions]) => {
+          this.patchForm(roles, permissions);
         });
+    });
+
+    // Subscribe to form value changes to track modifications
+    this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.hasChanges = true;
+    });
+  }
+
+  patchForm(roles: Role[], permissions: Permission[]) {
+    // Clear existing form array
+    while (this.rolesFA.length) {
+      this.rolesFA.removeAt(0);
+    }
+
+    // Create form groups for each role
+    roles.forEach((role) => {
+      const roleForm = new FormGroup({
+        roleId: new FormControl(role.id),
+        permissions: new FormArray(
+          permissions.map((permission) => {
+            return new FormGroup({
+              permissionId: new FormControl(permission.id),
+              isChecked: new FormControl(false),
+            });
+          })
+        ),
+      });
+
+      this.rolesFA.push(roleForm);
+    });
+  }
+
+  getPermissionControl(
+    roleIndex: number,
+    permissionIndex: number
+  ): FormControl {
+    const roleGroup = this.rolesFA.at(roleIndex) as FormGroup;
+    const permissionsArray = roleGroup.get("permissions") as FormArray;
+    const permissionGroup = permissionsArray.at(permissionIndex) as FormGroup;
+    return permissionGroup.get("isChecked") as FormControl;
+  }
+
+  onProjectChange(event: any) {
+    const projectId = event?.target?.value;
+    this.router.navigateByUrl(`/user/manage-page/${projectId}`);
+  }
+
+  onSave() {
+    if (this.form.valid) {
+      const formData = this.form.getRawValue();
+      console.log("Saving form data:", JSON.stringify(formData));
+      // TODO: Implement save logic
+      this.hasChanges = false;
     }
   }
 
   onCancel() {
-    this.modalOpen = false;
     this.form.reset();
+    this.hasChanges = false;
   }
 }

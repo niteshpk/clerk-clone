@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ClrSelectModule } from "@clr/angular";
@@ -16,4 +16,10 @@ export class SelectContainerComponent {
   @Input() control!: FormControl;
   @Input() name!: string;
   @Input() options: { label: string; value: string }[] = [];
+  @Input() placeholder: string = "";
+  @Output() selectionChange = new EventEmitter<any>();
+
+  onSelectionChange(event: any) {
+    this.selectionChange.emit(event);
+  }
 }

@@ -25,7 +25,7 @@ import { PaginationComponent } from "@components/pagination/pagination.component
 import { InputContainerComponent } from "@components/input-container/input-container.component";
 import { SelectContainerComponent } from "@components/select-container/select-container.component";
 import { ModalFormComponent } from "@components/modal-form/modal-form.component";
-import { BaseComponent } from "@components/base/base.component";
+import { BaseComponent } from "@components/base-component/base-component.component";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
@@ -78,7 +78,7 @@ export class RolesPageComponent extends BaseComponent {
   loadRoles() {
     this.roleService
       .getRoles()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((roles) => {
         this.roles = roles;
       });
@@ -94,7 +94,7 @@ export class RolesPageComponent extends BaseComponent {
             value: project.id.toString(),
           }))
         ),
-        takeUntil(this.destroy$)
+        takeUntil(this.onDestroy$)
       )
       .subscribe((projects: SelectOption[]) => {
         this.projects = projects;
@@ -143,12 +143,12 @@ export class RolesPageComponent extends BaseComponent {
         acceptText: "Delete",
         acceptType: "danger",
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((confirmed) => {
         if (confirmed) {
           this.roleService
             .deleteRole(role.id)
-            .pipe(takeUntil(this.destroy$))
+            .pipe(takeUntil(this.onDestroy$))
             .subscribe(() => {
               this.loadRoles();
             });
@@ -163,7 +163,7 @@ export class RolesPageComponent extends BaseComponent {
       if (this.isEditMode && this.selectedRole) {
         this.roleService
           .updateRole(this.selectedRole.id, formData)
-          .pipe(takeUntil(this.destroy$))
+          .pipe(takeUntil(this.onDestroy$))
           .subscribe(() => {
             this.loadRoles();
             this.modalOpen = false;
@@ -173,7 +173,7 @@ export class RolesPageComponent extends BaseComponent {
 
       this.roleService
         .createRole(formData)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntil(this.onDestroy$))
         .subscribe(() => {
           this.loadRoles();
           this.modalOpen = false;

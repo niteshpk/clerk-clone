@@ -1,64 +1,78 @@
 <div class="header-area">
-  <h3 class="headline">Manage Projects</h3>
+  <h3 class="headline">Manage Page - {{ projectId }}</h3>
 
-  <app-button [btnType]="'btn-primary'" (onClick)="onAddProject()">
-    Add Project
-  </app-button>
+  <app-select-container
+    [control]="projectControl"
+    name="project_id"
+    [options]="projects"
+    class="w-auto"
+    [placeholder]="'Select Project'"
+    (selectionChange)="onProjectChange($event)"
+  ></app-select-container>
 </div>
 
-<clr-datagrid>
-  <clr-dg-column class="sr-column">Sr</clr-dg-column>
-  <clr-dg-column>Name</clr-dg-column>
-  <clr-dg-column>Created At</clr-dg-column>
-  <clr-dg-column>Updated At</clr-dg-column>
-  <clr-dg-column>Actions</clr-dg-column>
-  <clr-dg-placeholder>We couldn't find any projects!</clr-dg-placeholder>
+<div class="card">
+  <div class="card-block" *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th align="left">Permission</th>
+              <th *ngFor="let role of roles$ | async">{{ role.role }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let permission of permissions$ | async;
+                let permissionIndex = index
+              "
+            >
+              <td>{{ permission.permission }}</td>
+              <td
+                *ngFor="let roleForm of rolesFA.controls; let roleIndex = index"
+              >
+                <clr-checkbox-wrapper>
+                  <input
+                    type="checkbox"
+                    clrCheckbox
+                    [formControl]="
+                      getPermissionControl(roleIndex, permissionIndex)
+                    "
+                  />
+                </clr-checkbox-wrapper>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-  <clr-dg-row *clrDgItems="let project of projects; let i = index">
-    <clr-dg-cell class="sr-column">{{ i + 1 }}</clr-dg-cell>
-    <clr-dg-cell>{{ project.name }}</clr-dg-cell>
-    <clr-dg-cell>{{ project.createdAt | date : "medium" }}</clr-dg-cell>
-    <clr-dg-cell>{{ project.updatedAt | date : "medium" }}</clr-dg-cell>
-    <clr-dg-cell>
-      <cds-icon
-        shape="pencil"
-        (click)="onEditProject(project, $event)"
-      ></cds-icon>
-      <cds-icon
-        shape="trash"
-        (click)="onDeleteProject(project, $event)"
-      ></cds-icon>
-    </clr-dg-cell>
+      <div class="card-footer pl-0">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onSave()"
+          [disabled]="!hasChanges"
+        >
+          Save Changes
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline"
+          (click)="onCancel()"
+          [disabled]="!hasChanges"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
 
-    <clr-dg-row-detail *clrIfExpanded>
-      <app-permissions-matrix></app-permissions-matrix>
-    </clr-dg-row-detail>
-  </clr-dg-row>
-
-  <clr-dg-footer>
-    <app-pagination
-      [totalItems]="projects.length"
-      [pageSize]="pageSize"
-      [currentPage]="currentPage"
-      (pageChange)="onPageChange($event)"
-      (pageSizeChange)="onPageSizeChange($event)"
-    ></app-pagination>
-  </clr-dg-footer>
-</clr-datagrid>
-
-<app-modal-form
-  [modalOpen]="modalOpen"
-  [title]="isEditMode ? 'Edit Project' : 'Create Project'"
-  [form]="form"
-  [submitButtonText]="isEditMode ? 'Update Project' : 'Create Project'"
-  (onSubmit)="onSubmit()"
-  (onCancel)="onCancel()"
->
-  <app-input-container
-    label="Name"
-    [control]="form.controls.name"
-    name="name"
-    placeholder="Enter project name"
-    [required]="true"
-  ></app-input-container>
-</app-modal-form>
+  <div class="card-block" *ngIf="isLoading$ | async">
+    <app-spinner
+      [medium]="true"
+      [text]="'Getting project permissions..'"
+    ></app-spinner>
+  </div>
+</div>
