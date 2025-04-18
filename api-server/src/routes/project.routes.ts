@@ -11,8 +11,12 @@ import {
   createProjectSchema,
   updateProjectSchema,
 } from "../validations/project.validation";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+// All routes below require authentication
+router.use(authMiddleware);
 
 // Project routes
 router.post("/", validateRequest(createProjectSchema), createProject);

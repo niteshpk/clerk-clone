@@ -9,7 +9,13 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { ClarityModule } from "@clr/angular";
-import { combineLatest, finalize, Observable, takeUntil } from "rxjs";
+import {
+  BehaviorSubject,
+  combineLatest,
+  finalize,
+  Observable,
+  takeUntil,
+} from "rxjs";
 import { RoleService } from "@services/role/role.service";
 import { PermissionService } from "@services/permission/permission.service";
 import { Role } from "@models/role.model";
@@ -20,6 +26,7 @@ import { SelectOption } from "@models/common.model";
 import { ProjectService } from "@services/project/project.service";
 import { SpinnerComponent } from "@components/spinner/spinner.component";
 import { BaseComponent } from "@components/base-component/base-component.component";
+import { ManageService } from "@services/manage/manage.service";
 
 @Component({
   selector: "app-manage-page",
@@ -38,13 +45,12 @@ import { BaseComponent } from "@components/base-component/base-component.compone
 export class ManagePageComponent extends BaseComponent implements OnInit {
   roles$: Observable<Role[]>;
   permissions$: Observable<Permission[]>;
-  hasChanges = false;
-  projectId: string = "";
+  projectId$ = new BehaviorSubject<string>("");
   projectControl = new FormControl("");
   projects: SelectOption[] = [];
+  defaultControl = new FormControl(false);
 
   form: FormGroup = new FormGroup({
-    projectId: new FormControl(""),
     roles: new FormArray([]),
   });
 
@@ -56,8 +62,7 @@ export class ManagePageComponent extends BaseComponent implements OnInit {
     private roleService: RoleService,
     private permissionService: PermissionService,
     private projectService: ProjectService,
-    private route: ActivatedRoute,
-    private router: Router
+    private manageService: ManageService
   ) {
     super();
     this.roles$ = this.roleService.getRoles();
@@ -65,53 +70,43 @@ export class ManagePageComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setLoading(true);
-
-    this.projectService
-      .getProjects()
-      .pipe(finalize(() => this.setLoading(false)))
-      .subscribe((projects) => {
+    combineLatest([
+      this.projectService.getProjects(),
+      this.roles$,
+      this.permissions$,
+    ])
+      .pipe(
+        takeUntil(this.onDestroy$),
+        finalize(() => this.setLoading(false))
+      )
+      .subscribe(([projects, roles, permissions]) => {
+        console.log(projects, roles, permissions);
+        // Update projects
         this.projects = projects.map((project) => ({
           label: project.name,
           value: project.id.toString(),
         }));
+        this.onProjectChange({ target: { value: this.projects[0].value } });
       });
-
-    this.route.params.subscribe((params) => {
-      this.projectId = params["projectId"];
-      if (this.projectControl.getRawValue() !== this.projectId) {
-        this.projectControl.patchValue(this.projectId);
-      }
-      this.form.get("projectId")?.patchValue(this.projectId);
-      this.setLoading(true);
-      combineLatest([this.roles$, this.permissions$])
-        .pipe(takeUntil(this.onDestroy$))
-        .subscribe(([roles, permissions]) => {
-          this.patchForm(roles, permissions);
-        });
-    });
-
-    // Subscribe to form value changes to track modifications
-    this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.hasChanges = true;
-    });
   }
 
-  patchForm(roles: Role[], permissions: Permission[]) {
+  patchForm(permissions: any) {
     // Clear existing form array
     while (this.rolesFA.length) {
       this.rolesFA.removeAt(0);
     }
 
     // Create form groups for each role
-    roles.forEach((role) => {
+    permissions.forEach((role: any) => {
       const roleForm = new FormGroup({
-        roleId: new FormControl(role.id),
+        roleId: new FormControl(role.roleId),
         permissions: new FormArray(
-          permissions.map((permission) => {
+          role.permissions.map((permission: any) => {
+            console.log(permission, "----");
             return new FormGroup({
-              permissionId: new FormControl(permission.id),
-              isChecked: new FormControl(false),
+              permissionId: new FormControl(permission.permissionId),
+              isChecked: new FormControl(!!permission.isChecked),
+              permissionName: new FormControl(permission.permissionName),
             });
           })
         ),
@@ -125,28 +120,61 @@ export class ManagePageComponent extends BaseComponent implements OnInit {
     roleIndex: number,
     permissionIndex: number
   ): FormControl {
-    const roleGroup = this.rolesFA.at(roleIndex) as FormGroup;
-    const permissionsArray = roleGroup.get("permissions") as FormArray;
-    const permissionGroup = permissionsArray.at(permissionIndex) as FormGroup;
-    return permissionGroup.get("isChecked") as FormControl;
+    try {
+      const roleGroup = this.rolesFA?.at(roleIndex) as FormGroup;
+      if (!roleGroup) return this.defaultControl;
+
+      const permissionsArray = roleGroup.get("permissions") as FormArray;
+      if (!permissionsArray) return this.defaultControl;
+
+      const permissionGroup = permissionsArray.at(permissionIndex) as FormGroup;
+      if (!permissionGroup) return this.defaultControl;
+
+      const control = permissionGroup.get("isChecked") as FormControl;
+      return control || this.defaultControl;
+    } catch (error) {
+      console.error("Error accessing form control:", error);
+      return this.defaultControl;
+    }
   }
 
   onProjectChange(event: any) {
     const projectId = event?.target?.value;
-    this.router.navigateByUrl(`/user/manage-page/${projectId}`);
+
+    // Handle project selection
+    this.projectId$.next(projectId);
+
+    if (this.projectControl.getRawValue() !== this.projectId$.value) {
+      this.projectControl.patchValue(this.projectId$.value);
+    }
+
+    // Get and patch permissions
+    if (this.projectId$.value) {
+      this.manageService
+        .getProjectPermissions(projectId)
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe((projectPermissions) => {
+          console.log(projectPermissions);
+          this.patchForm(projectPermissions);
+        });
+    }
   }
 
   onSave() {
     if (this.form.valid) {
-      const formData = this.form.getRawValue();
+      const formData = this.form.get("roles")?.getRawValue();
       console.log("Saving form data:", JSON.stringify(formData));
-      // TODO: Implement save logic
-      this.hasChanges = false;
+
+      this.manageService
+        .updateProjectPermissions(this.projectId$.value, formData)
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe((updatedPermissions) => {
+          console.log("Updated permissions:", updatedPermissions);
+        });
     }
   }
 
   onCancel() {
     this.form.reset();
-    this.hasChanges = false;
   }
 }

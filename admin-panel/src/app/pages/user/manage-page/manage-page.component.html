@@ -1,5 +1,5 @@
 <div class="header-area">
-  <h3 class="headline">Manage Page - {{ projectId }}</h3>
+  <h3 class="headline">Manage Page</h3>
 
   <app-select-container
     [control]="projectControl"
@@ -11,8 +11,8 @@
   ></app-select-container>
 </div>
 
-<div class="card">
-  <div class="card-block" *ngIf="!(isLoading$ | async)">
+<div class="card" *ngIf="projectId$.value !== ''; else selectProject">
+  <div class="card-block">
     <form [formGroup]="form">
       <div class="table-responsive">
         <table class="table">
@@ -49,20 +49,10 @@
       </div>
 
       <div class="card-footer pl-0">
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="onSave()"
-          [disabled]="!hasChanges"
-        >
+        <button type="button" class="btn btn-primary" (click)="onSave()">
           Save Changes
         </button>
-        <button
-          type="button"
-          class="btn btn-outline"
-          (click)="onCancel()"
-          [disabled]="!hasChanges"
-        >
+        <button type="button" class="btn btn-outline" (click)="onCancel()">
           Cancel
         </button>
       </div>
@@ -76,3 +66,9 @@
     ></app-spinner>
   </div>
 </div>
+
+<ng-template #selectProject>
+  <div class="card-block">
+    <p class="headline">Select a project to manage permissions</p>
+  </div>
+</ng-template>

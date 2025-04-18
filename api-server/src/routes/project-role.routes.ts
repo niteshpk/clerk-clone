@@ -11,8 +11,12 @@ import {
   createProjectRoleSchema,
   updateProjectRoleSchema,
 } from "../validations/project-role.validation";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+// All routes below require authentication
+router.use(authMiddleware);
 
 // Project role routes
 router.post("/", validateRequest(createProjectRoleSchema), createProjectRole);

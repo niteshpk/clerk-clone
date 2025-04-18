@@ -23,7 +23,7 @@ export const USER_ROUTES: Routes = [
     component: PermissionsPageComponent,
   },
   {
-    path: "manage-page/:projectId",
+    path: "manage-page",
     component: ManagePageComponent,
   },
   {
