@@ -180,7 +180,10 @@ export const deleteProjectPermission = async (req: Request, res: Response) => {
 
 export const getProjectPermissions = async (req: Request, res: Response) => {
   try {
-    const projectPermissions = await ProjectPermission.find({}).lean();
+    const { projectId } = req.query;
+    const query = projectId ? { project_id: projectId } : {};
+
+    const projectPermissions = await ProjectPermission.find(query).lean();
 
     const transformedProjectPermissions = projectPermissions.map((permission) =>
       transformDocument(permission)

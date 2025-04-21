@@ -18,6 +18,12 @@ export class PermissionService {
       .pipe(map((res: PermissionResponse) => res.data.permissions));
   }
 
+  getPermissionsByProjectId(projectId: string): Observable<Permission[]> {
+    return this.baseHttp
+      .get<PermissionResponse>(`${this.BASE_URL}?projectId=${projectId}`)
+      .pipe(map((res: PermissionResponse) => res.data.permissions));
+  }
+
   createPermission(Permission: Partial<Permission>): Observable<Permission> {
     return this.baseHttp.post<Permission>(this.BASE_URL, Permission);
   }

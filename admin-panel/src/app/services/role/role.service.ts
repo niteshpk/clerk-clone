@@ -18,6 +18,12 @@ export class RoleService {
       .pipe(map((res: RoleResponse) => res.data.roles));
   }
 
+  getRolesByProjectId(projectId: string): Observable<Role[]> {
+    return this.baseHttp
+      .get<RoleResponse>(`${this.BASE_URL}?projectId=${projectId}`)
+      .pipe(map((res: RoleResponse) => res.data.roles));
+  }
+
   createRole(Role: Partial<Role>): Observable<Role> {
     return this.baseHttp.post<Role>(this.BASE_URL, Role);
   }

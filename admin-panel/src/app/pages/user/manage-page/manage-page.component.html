@@ -19,13 +19,15 @@
           <thead>
             <tr>
               <th align="left">Permission</th>
-              <th *ngFor="let role of roles$ | async">{{ role.role }}</th>
+              <th *ngFor="let role of rolesFA.controls">
+                {{ role.get("roleName")?.value }}
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr
               *ngFor="
-                let permission of permissions$ | async;
+                let permission of permissionList;
                 let permissionIndex = index
               "
             >

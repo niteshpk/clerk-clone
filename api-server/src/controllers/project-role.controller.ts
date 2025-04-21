@@ -185,8 +185,8 @@ export const deleteProjectRole = async (req: Request, res: Response) => {
 
 export const getProjectRoles = async (req: Request, res: Response) => {
   try {
-    const { project } = req.query;
-    const query = project ? { project } : {};
+    const { projectId } = req.query;
+    const query = projectId ? { project_id: projectId } : {};
 
     const projectRoles = await ProjectRole.find(query).lean();
     const transformedProjectRoles = transformDocument(projectRoles);

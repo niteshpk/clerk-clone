@@ -16,12 +16,7 @@ export class ManageService {
   getProjectPermissions(projectId: string): Observable<RolePermission[]> {
     return this.baseHttp
       .get<ManageResponse>(`${this.BASE_URL}/${projectId}`)
-      .pipe(
-        tap((res: ManageResponse) => {
-          console.log(res.data);
-        }),
-        map((res: ManageResponse) => res.data.permissions)
-      );
+      .pipe(map((res: ManageResponse) => res.data.permissions));
   }
 
   updateProjectPermissions(
