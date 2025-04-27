@@ -13,7 +13,7 @@ export const publicGuard: CanActivateFn = (route, state) => {
       if (!isAuthenticated) {
         return true;
       }
-      return router.createUrlTree(["/user/first-page"]);
+      return router.createUrlTree(["/user/projects-page"]);
     })
   );
 };

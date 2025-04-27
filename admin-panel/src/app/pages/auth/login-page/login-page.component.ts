@@ -85,7 +85,7 @@ export class LoginPageComponent extends BaseComponent implements OnInit {
         this.authService.setToken(res.data.token);
         this.authService.setUser(res.data.user);
 
-        this.router.navigateByUrl("/user/first-page");
+        this.router.navigateByUrl("/user/projects-page");
       });
   }
 }

@@ -23,11 +23,6 @@ import { NgForOf } from "@angular/common";
 export class SidebarComponent {
   navigationItems: NavItem[] = [
     {
-      path: "/user/first-page",
-      label: "First Page",
-      icon: "user",
-    },
-    {
       path: "/user/projects-page",
       label: "Projects Page",
       icon: "bolt",
@@ -45,11 +40,6 @@ export class SidebarComponent {
     {
       path: "/user/manage-page",
       label: "Manage Page",
-      icon: "bolt",
-    },
-    {
-      path: "/user/blank-page",
-      label: "Blank Page",
       icon: "bolt",
     },
   ];

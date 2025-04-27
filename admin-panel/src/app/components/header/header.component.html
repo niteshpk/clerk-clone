@@ -2,7 +2,7 @@
   <div class="branding">
     <a routerLink="/" routerLinkActive="active">
       <cds-icon shape="bolt"></cds-icon>
-      <span class="title">VMWare</span>
+      <span class="title">VaultControl</span>
     </a>
   </div>
   <div class="header-actions">
@@ -18,7 +18,8 @@
     </button>
 
     <clr-dropdown>
-      <button class="nav-text" clrDropdownTrigger>
+      <button class="nav-text btn-link nav-link" clrDropdownTrigger>
+        <cds-icon shape="user"></cds-icon>
         {{ user?.email }}
         <cds-icon shape="angle" direction="down"></cds-icon>
       </button>
@@ -26,31 +27,5 @@
         <a clrDropdownItem (click)="logout()">Logout</a>
       </clr-dropdown-menu>
     </clr-dropdown>
-    <!-- <clr-dropdown>
-      <button
-        class="nav-icon"
-        clrDropdownTrigger
-        aria-label="toggle settings menu"
-      >
-        <cds-icon shape="user"></cds-icon>
-        <cds-icon shape="angle" direction="down"></cds-icon>
-      </button>
-
-      <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-        <div clrDropdownItem aria-disabled="true" [clrDisabled]="true">
-          <cds-icon shape="user"></cds-icon>
-          <span>{{ user?.fullName }}</span>
-        </div>
-        <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-        <div
-          clrDropdownItem
-          (click)="logout()"
-          [clrDisabled]="!!(isLoading$ | async)"
-        >
-          <cds-icon shape="logout"></cds-icon>
-          <span>Log out</span>
-        </div>
-      </clr-dropdown-menu>
-    </clr-dropdown> -->
   </div>
 </header>
